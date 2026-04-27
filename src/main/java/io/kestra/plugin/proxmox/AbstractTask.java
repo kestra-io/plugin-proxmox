@@ -8,11 +8,15 @@ import io.kestra.core.runners.RunContext;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 @SuperBuilder(toBuilder = true)
+@ToString
+@EqualsAndHashCode
 @NoArgsConstructor
 @Getter
 public abstract class AbstractTask<T extends io.kestra.core.models.tasks.Output> extends Task implements RunnableTask<T> {
