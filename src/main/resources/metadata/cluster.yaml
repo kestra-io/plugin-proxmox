@@ -1,8 +1,8 @@
 group: io.kestra.plugin.proxmox.cluster
 name: "cluster"
-title: "Proxmox VE — cluster"
-description: "Proxmox VE cluster management tasks."
-body: ""
+title: "Proxmox VE Cluster"
+description: "Tasks that query node status, list cluster-wide resources, and list storage pools on a Proxmox VE cluster."
+body: "No specific node is required for cluster-scope queries. Returns JSON representations of node metrics, resource inventory across all nodes, and pool definitions."
 videos: []
 createdBy: "Kestra Core Team"
 managedBy: "Kestra Core Team"

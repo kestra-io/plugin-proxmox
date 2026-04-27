@@ -1,8 +1,8 @@
 group: io.kestra.plugin.proxmox
 name: "proxmox"
 title: "Proxmox VE"
-description: "Manage virtual machines, LXC containers, snapshots, backups, cluster resources, and network/firewall configuration on Proxmox VE."
-body: ""
+description: "Tasks that manage the full lifecycle of QEMU VMs and LXC containers on Proxmox VE, including backups, snapshots, cluster introspection, and network inspection."
+body: "Provide host, port, node, and either a username/password pair or an API token to authenticate. Covers VM and container lifecycle (create, start, stop, clone, migrate, delete), backup and snapshot management, cluster and pool introspection, network interface and firewall inspection, template management, and async task polling via UPID."
 videos: []
 createdBy: "Kestra Core Team"
 managedBy: "Kestra Core Team"

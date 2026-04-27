@@ -1,8 +1,8 @@
 group: io.kestra.plugin.proxmox.task
 name: "task"
-title: "Proxmox VE — task"
-description: "Proxmox VE task management tasks."
-body: ""
+title: "Proxmox VE Tasks"
+description: "Tasks that poll and wait for async Proxmox VE operations identified by a UPID."
+body: "Pass a UPID returned by any write operation to GetTaskStatus for a single status check, or to WaitForTask to block until the operation completes or a timeout is reached."
 videos: []
 createdBy: "Kestra Core Team"
 managedBy: "Kestra Core Team"

@@ -1,8 +1,8 @@
 group: io.kestra.plugin.proxmox.template
 name: "template"
-title: "Proxmox VE — template"
-description: "Proxmox VE template management tasks."
-body: ""
+title: "Proxmox VE Templates"
+description: "Tasks that convert a stopped VM or container into a template and list available templates on a Proxmox VE node."
+body: "Specify node, resource type, and VMID to convert a stopped machine to a reusable template. List returns all templates available for cloning on a given node."
 videos: []
 createdBy: "Kestra Core Team"
 managedBy: "Kestra Core Team"

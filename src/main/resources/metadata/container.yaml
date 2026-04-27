@@ -1,8 +1,8 @@
 group: io.kestra.plugin.proxmox.container
 name: "container"
-title: "Proxmox VE — container"
-description: "Proxmox VE container management tasks."
-body: ""
+title: "Proxmox VE Containers"
+description: "Tasks that create, start, stop, reboot, clone, migrate, update, delete, and list LXC containers on a Proxmox VE node."
+body: "Provide the node name, VMID, and connection details. Most write operations return a UPID for async tracking, which can be polled with the task.WaitForTask step."
 videos: []
 createdBy: "Kestra Core Team"
 managedBy: "Kestra Core Team"

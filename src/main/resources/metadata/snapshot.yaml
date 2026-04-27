@@ -1,8 +1,8 @@
 group: io.kestra.plugin.proxmox.snapshot
 name: "snapshot"
-title: "Proxmox VE — snapshot"
-description: "Proxmox VE snapshot management tasks."
-body: ""
+title: "Proxmox VE Snapshots"
+description: "Tasks that create, delete, list, and roll back snapshots for QEMU VMs and LXC containers on Proxmox VE."
+body: "Specify node, resource type, VMID, and snapshot name to manage point-in-time state. Rollback reverts the machine to a named snapshot; List returns all snapshots for a given resource."
 videos: []
 createdBy: "Kestra Core Team"
 managedBy: "Kestra Core Team"

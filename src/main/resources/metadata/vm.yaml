@@ -1,8 +1,8 @@
 group: io.kestra.plugin.proxmox.vm
 name: "vm"
-title: "Proxmox VE — vm"
-description: "Proxmox VE vm management tasks."
-body: ""
+title: "Proxmox VE VM"
+description: "Tasks that create, start, stop, reboot, reset, clone, migrate, update, delete, and list QEMU virtual machines on a Proxmox VE node."
+body: "Provide the node name, VMID, and connection details. Most write operations return a UPID for async tracking, which can be polled with the task.WaitForTask step. Includes a polling trigger that fires when a VM reaches a target status."
 videos: []
 createdBy: "Kestra Core Team"
 managedBy: "Kestra Core Team"

@@ -1,8 +1,8 @@
 group: io.kestra.plugin.proxmox.backup
 name: "backup"
-title: "Proxmox VE — backup"
-description: "Proxmox VE backup management tasks."
-body: ""
+title: "Proxmox VE Backup"
+description: "Tasks that create, restore, and list backups for QEMU VMs and LXC containers on Proxmox VE."
+body: "Specify node, resource type (vm or container), and VMID to trigger a vzdump backup or restore from a storage path. List returns all backups available on the node for a given storage target."
 videos: []
 createdBy: "Kestra Core Team"
 managedBy: "Kestra Core Team"

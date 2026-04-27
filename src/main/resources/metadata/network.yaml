@@ -1,8 +1,8 @@
 group: io.kestra.plugin.proxmox.network
 name: "network"
-title: "Proxmox VE — network"
-description: "Proxmox VE network interface and firewall management tasks."
-body: ""
+title: "Proxmox VE Network"
+description: "Tasks that list network interfaces and fetch firewall rules for a Proxmox VE node."
+body: "Provide the node name to list host-level network interfaces, or provide a VMID and resource type to fetch per-machine firewall rule sets."
 videos: []
 createdBy: "Kestra Core Team"
 managedBy: "Kestra Core Team"
