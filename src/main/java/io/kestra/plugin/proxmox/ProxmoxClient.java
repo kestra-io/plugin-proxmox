@@ -196,8 +196,14 @@ public class ProxmoxClient implements AutoCloseable {
         var bodyStr = response.getBody() != null ? response.getBody() : "";
         try {
             var tree = JacksonMapper.ofJson().readTree(bodyStr);
+            var errors = tree.get("errors");
+            if (errors != null && !errors.isNull()) {
+                throw new RuntimeException(context + " returned API errors: " + errors);
+            }
             var data = tree.get("data");
             return data != null ? data : JacksonMapper.ofJson().nullNode();
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Failed to parse response from " + context + ": " + bodyStr, e);
         }
