@@ -54,7 +54,7 @@ import lombok.experimental.SuperBuilder;
 )
 public class Rollback extends AbstractTask<AbstractTask.Output> {
 
-    @Schema(title = "VM or container name or ID")
+    @Schema(title = "VM or container name or ID", description = "VM or container name (resolved at runtime) or integer VMID.")
     @NotNull
     @PluginProperty(group = "main")
     private Property<String> vmName;

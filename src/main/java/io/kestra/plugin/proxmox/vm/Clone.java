@@ -57,7 +57,7 @@ import java.util.LinkedHashMap;
 )
 public class Clone extends AbstractTask<AbstractTask.Output> {
 
-    @Schema(title = "Source VM name or ID")
+    @Schema(title = "Source VM name or ID", description = "Either a VM name (resolved at runtime) or an integer VMID.")
     @NotNull
     @PluginProperty(group = "main")
     private Property<String> vmName;

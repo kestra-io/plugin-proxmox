@@ -76,8 +76,10 @@ import java.util.Optional;
 )
 public class Trigger extends AbstractTrigger implements PollingTriggerInterface, TriggerOutput<Trigger.Output> {
 
+    @Schema(title = "Polling interval", description = "How often to poll for VM status changes. ISO 8601 duration, e.g. PT1M.")
     @Builder.Default
-    private final Duration interval = Duration.ofMinutes(2);
+    @PluginProperty
+    private Duration interval = Duration.ofMinutes(1);
 
     @Schema(title = "Proxmox connection")
     @NotNull

@@ -58,7 +58,7 @@ import java.util.ArrayList;
 )
 public class List extends AbstractTask<List.Output> {
 
-    @Schema(title = "VM or container name or ID")
+    @Schema(title = "VM or container name or ID", description = "VM or container name (resolved at runtime) or integer VMID.")
     @NotNull
     @PluginProperty(group = "main")
     private Property<String> vmName;

@@ -52,7 +52,7 @@ import lombok.experimental.SuperBuilder;
 )
 public class Create extends AbstractTask<VoidOutput> {
 
-    @Schema(title = "VM name or ID to convert")
+    @Schema(title = "VM name or ID to convert", description = "Either a VM name (resolved at runtime) or an integer VMID.")
     @NotNull
     @PluginProperty(group = "main")
     private Property<String> vmName;

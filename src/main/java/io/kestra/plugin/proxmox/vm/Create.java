@@ -67,7 +67,7 @@ public class Create extends AbstractTask<AbstractTask.Output> {
     @PluginProperty(group = "main")
     private Property<Integer> vmId;
 
-    @Schema(title = "VM name")
+    @Schema(title = "VM name", description = "Either a VM name (resolved at runtime) or an integer VMID.")
     @NotNull
     @PluginProperty(group = "main")
     private Property<String> vmName;
