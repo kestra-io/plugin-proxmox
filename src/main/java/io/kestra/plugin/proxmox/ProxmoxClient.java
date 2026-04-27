@@ -6,6 +6,9 @@ import io.kestra.core.http.HttpRequest;
 import io.kestra.core.http.HttpResponse;
 import io.kestra.core.http.client.HttpClient;
 import io.kestra.core.http.client.HttpClientResponseException;
+import io.kestra.core.http.client.configurations.HttpConfiguration;
+import io.kestra.core.http.client.configurations.SslOptions;
+import io.kestra.core.models.property.Property;
 import io.kestra.core.runners.RunContext;
 
 import java.net.URI;
@@ -25,25 +28,33 @@ public class ProxmoxClient implements AutoCloseable {
     private String csrfToken;
     private String tokenAuthHeader;
 
-    public ProxmoxClient(String baseUrl, String node, String username, String password, RunContext runContext)
+    public ProxmoxClient(String baseUrl, String node, String username, String password, boolean verifySsl, RunContext runContext)
         throws Exception {
         this.baseUrl = baseUrl;
         this.node = node;
-        this.http = HttpClient.builder().runContext(runContext).build();
+        this.http = HttpClient.builder().runContext(runContext).configuration(sslConfig(verifySsl)).build();
         authenticateWithTicket(username, password);
     }
 
-    public static ProxmoxClient withToken(String baseUrl, String node, String tokenId, String tokenSecret, RunContext runContext)
+    public static ProxmoxClient withToken(String baseUrl, String node, String tokenId, String tokenSecret, boolean verifySsl, RunContext runContext)
         throws Exception {
-        var client = new ProxmoxClient(baseUrl, node, runContext);
+        var client = new ProxmoxClient(baseUrl, node, verifySsl, runContext);
         client.tokenAuthHeader = "PVEAPIToken=" + tokenId + "=" + tokenSecret;
         return client;
     }
 
-    private ProxmoxClient(String baseUrl, String node, RunContext runContext) throws Exception {
+    private ProxmoxClient(String baseUrl, String node, boolean verifySsl, RunContext runContext) throws Exception {
         this.baseUrl = baseUrl;
         this.node = node;
-        this.http = HttpClient.builder().runContext(runContext).build();
+        this.http = HttpClient.builder().runContext(runContext).configuration(sslConfig(verifySsl)).build();
+    }
+
+    private static HttpConfiguration sslConfig(boolean verifySsl) {
+        return HttpConfiguration.builder()
+            .ssl(SslOptions.builder()
+                .insecureTrustAllCertificates(Property.ofValue(!verifySsl))
+                .build())
+            .build();
     }
 
     private void authenticateWithTicket(String username, String password) throws Exception {

@@ -95,7 +95,7 @@ public class Trigger extends AbstractTrigger implements PollingTriggerInterface,
     protected Property<String> username;
 
     @Schema(title = "Password")
-    @PluginProperty(group = "main")
+    @PluginProperty(group = "main", secret = true)
     protected Property<String> password;
 
     @Schema(title = "API token ID")
@@ -103,7 +103,7 @@ public class Trigger extends AbstractTrigger implements PollingTriggerInterface,
     protected Property<String> tokenId;
 
     @Schema(title = "API token secret")
-    @PluginProperty(group = "main")
+    @PluginProperty(group = "main", secret = true)
     protected Property<String> tokenSecret;
 
     @Schema(title = "Verify SSL", description = "Defaults to false.")

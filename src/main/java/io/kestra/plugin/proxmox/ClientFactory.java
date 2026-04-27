@@ -22,11 +22,11 @@ public final class ClientFactory {
             : "https://" + host + ":" + port + "/api2/json";
 
         if (tokenId != null && !tokenId.isBlank() && tokenSecret != null && !tokenSecret.isBlank()) {
-            return ProxmoxClient.withToken(baseUrl, node, tokenId, tokenSecret, runContext);
+            return ProxmoxClient.withToken(baseUrl, node, tokenId, tokenSecret, verifySsl, runContext);
         }
         if (username == null || username.isBlank()) {
             throw new IllegalArgumentException("Proxmox auth: provide either username+password or tokenId+tokenSecret.");
         }
-        return new ProxmoxClient(baseUrl, node, username, password, runContext);
+        return new ProxmoxClient(baseUrl, node, username, password, verifySsl, runContext);
     }
 }

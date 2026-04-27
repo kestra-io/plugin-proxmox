@@ -68,6 +68,6 @@ public class Create extends AbstractTask<VoidOutput> {
             logger.info("VM {} converted to template", rVmName);
         }
 
-        return null;
+        return new VoidOutput();
     }
 }
