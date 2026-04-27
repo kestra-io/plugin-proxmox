@@ -17,6 +17,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.LinkedHashMap;
 
 @SuperBuilder
@@ -77,6 +78,14 @@ public class Create extends AbstractTask<AbstractTask.Output> {
     @PluginProperty(group = "advanced")
     private Property<String> compress = Property.ofValue("zstd");
 
+    @Schema(
+        title = "Task timeout",
+        description = "Maximum time to wait for the backup operation to complete. Defaults to 1 hour."
+    )
+    @Builder.Default
+    @PluginProperty(group = "advanced")
+    private Property<Duration> timeout = Property.ofValue(Duration.ofHours(1));
+
     @Override
     public AbstractTask.Output run(RunContext runContext) throws Exception {
         var logger = runContext.logger();
@@ -94,11 +103,13 @@ public class Create extends AbstractTask<AbstractTask.Output> {
             params.put("mode", rMode);
             params.put("compress", rCompress);
 
+            var timeoutSeconds = (int) runContext.render(timeout).as(Duration.class)
+                .orElse(Duration.ofHours(1)).toSeconds();
             logger.info("Creating backup for vmid={} on storage '{}' (mode={}, compress={})", vmid, rStorage, rMode, rCompress);
             var result = client.post("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/vzdump", params);
             var upid = result.isNull() ? "" : result.asText();
             if (!upid.isBlank()) {
-                client.waitForTask(upid, 3600);
+                client.waitForTask(upid, timeoutSeconds);
             }
             logger.info("Backup completed for vmid={}", vmid);
             return AbstractTask.Output.of(String.valueOf(vmid), rVmName, upid);
