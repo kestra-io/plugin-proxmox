@@ -27,6 +27,9 @@ public final class ClientFactory {
         if (username == null || username.isBlank()) {
             throw new IllegalArgumentException("Proxmox auth: provide either username+password or tokenId+tokenSecret.");
         }
+        if (password == null || password.isBlank()) {
+            throw new IllegalArgumentException("Proxmox auth: password is required when using username/password authentication.");
+        }
         return new ProxmoxClient(baseUrl, node, username, password, verifySsl, runContext);
     }
 }
