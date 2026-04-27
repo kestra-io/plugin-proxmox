@@ -122,6 +122,15 @@ public class ProxmoxClient implements AutoCloseable {
         return requireData(response, "DELETE " + path);
     }
 
+    public String deleteAndWait(String path) throws Exception {
+        var result = delete(path);
+        var upid = result.isNull() ? "" : result.asText();
+        if (!upid.isBlank()) {
+            waitForTask(upid);
+        }
+        return upid;
+    }
+
     public String postAndWait(String path, Map<String, String> params) throws Exception {
         var result = post(path, params);
         var upid = result.isNull() ? "" : result.asText();

@@ -62,11 +62,7 @@ public class Delete extends AbstractTask<AbstractTask.Output> {
         try (var client = createClient(runContext)) {
             var vmid = client.resolveVmId(rVmName);
             logger.info("Deleting container {} (vmid={})", rVmName, vmid);
-            var result = client.delete("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/lxc/" + vmid);
-            var upid = result.isNull() ? "" : result.asText();
-            if (!upid.isBlank()) {
-                client.waitForTask(upid);
-            }
+            var upid = client.deleteAndWait("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/lxc/" + vmid);
             logger.info("Container {} deleted", rVmName);
             return AbstractTask.Output.of(String.valueOf(vmid), rVmName, upid);
         }

@@ -82,11 +82,7 @@ public class Delete extends AbstractTask<AbstractTask.Output> {
         try (var client = createClient(runContext)) {
             var vmid = client.resolveVmId(rVmName);
             logger.info("Deleting snapshot '{}' for {} vmid={}", rSnapName, rResourceType, vmid);
-            var result = client.delete("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/" + apiSegment + "/" + vmid + "/snapshot/" + URLEncoder.encode(rSnapName, StandardCharsets.UTF_8));
-            var upid = result.isNull() ? "" : result.asText();
-            if (!upid.isBlank()) {
-                client.waitForTask(upid);
-            }
+            var upid = client.deleteAndWait("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/" + apiSegment + "/" + vmid + "/snapshot/" + URLEncoder.encode(rSnapName, StandardCharsets.UTF_8));
             logger.info("Snapshot '{}' deleted", rSnapName);
             return AbstractTask.Output.of(String.valueOf(vmid), rVmName, upid);
         }
