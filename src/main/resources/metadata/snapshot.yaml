@@ -1,0 +1,8 @@
+group: io.kestra.plugin.proxmox.snapshot
+name: "snapshot"
+title: "Proxmox VE — snapshot"
+description: "Proxmox VE snapshot management tasks."
+body: ""
+videos: []
+createdBy: "Kestra Core Team"
+managedBy: "Kestra Core Team"

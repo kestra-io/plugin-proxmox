@@ -1,0 +1,8 @@
+group: io.kestra.plugin.proxmox.cluster
+name: "cluster"
+title: "Proxmox VE — cluster"
+description: "Proxmox VE cluster management tasks."
+body: ""
+videos: []
+createdBy: "Kestra Core Team"
+managedBy: "Kestra Core Team"

@@ -1,0 +1,8 @@
+group: io.kestra.plugin.proxmox.backup
+name: "backup"
+title: "Proxmox VE — backup"
+description: "Proxmox VE backup management tasks."
+body: ""
+videos: []
+createdBy: "Kestra Core Team"
+managedBy: "Kestra Core Team"

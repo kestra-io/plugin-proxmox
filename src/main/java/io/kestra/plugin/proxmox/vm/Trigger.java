@@ -1,0 +1,169 @@
+package io.kestra.plugin.proxmox.vm;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.kestra.core.models.annotations.Example;
+import io.kestra.core.models.annotations.Plugin;
+import io.kestra.core.models.annotations.PluginProperty;
+import io.kestra.core.models.conditions.ConditionContext;
+import io.kestra.core.models.executions.Execution;
+import io.kestra.core.models.property.Property;
+import io.kestra.core.models.triggers.AbstractTrigger;
+import io.kestra.core.models.triggers.PollingTriggerInterface;
+import io.kestra.core.models.triggers.TriggerContext;
+import io.kestra.core.models.triggers.TriggerOutput;
+import io.kestra.core.models.triggers.TriggerService;
+import io.kestra.core.models.triggers.StatefulTriggerInterface;
+import io.kestra.core.models.triggers.StatefulTriggerService;
+import io.kestra.plugin.proxmox.ProxmoxConnection;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+
+@SuperBuilder
+@ToString
+@EqualsAndHashCode
+@Getter
+@NoArgsConstructor
+@Schema(
+    title = "Trigger on Proxmox VE QEMU VM status changes",
+    description = """
+        Polls /nodes/{node}/qemu on the configured interval and fires when any VM's status matches
+        the configured targetStatus (e.g. running, stopped). Returns the list of matching VMs.
+        """
+)
+@Plugin(
+    examples = {
+        @Example(
+            title = "Fire when any VM enters stopped state",
+            full = true,
+            code = """
+                id: vm_stopped_trigger
+                namespace: company.team
+
+                triggers:
+                  - id: watch
+                    type: io.kestra.plugin.proxmox.vm.Trigger
+                    interval: PT1M
+                    connection:
+                      host: "{{ secret('PROXMOX_HOST') }}"
+                      username: "{{ secret('PROXMOX_USERNAME') }}"
+                      password: "{{ secret('PROXMOX_PASSWORD') }}"
+                      node: pve
+                    targetStatus: stopped
+
+                tasks:
+                  - id: log
+                    type: io.kestra.plugin.core.log.Log
+                    message: "VMs stopped: {{ trigger.vms }}"
+                """
+        )
+    }
+)
+public class Trigger extends AbstractTrigger implements PollingTriggerInterface, TriggerOutput<Trigger.Output> {
+
+    @Builder.Default
+    private final Duration interval = Duration.ofMinutes(2);
+
+    @Schema(title = "Proxmox connection")
+    @NotNull
+    @PluginProperty
+    private ProxmoxConnection connection;
+
+    @Schema(
+        title = "Target VM status",
+        description = "Status to match for triggering, e.g. running or stopped."
+    )
+    @NotNull
+    @PluginProperty(group = "main")
+    protected Property<String> targetStatus;
+
+    @Override
+    public Duration getInterval() {
+        return interval;
+    }
+
+    @Override
+    public Optional<Execution> evaluate(ConditionContext conditionContext, TriggerContext context) throws Exception {
+        var runContext = conditionContext.getRunContext();
+
+        var rNode = runContext.render(connection.getNode()).as(String.class).orElseThrow();
+        var rTargetStatus = runContext.render(targetStatus).as(String.class).orElseThrow();
+
+        var stateKey = StatefulTriggerService.defaultKey(context.getNamespace(), context.getFlowId(), context.getTriggerId());
+        var state = StatefulTriggerService.readState(runContext, stateKey, Optional.empty());
+        var updatedState = new HashMap<>(state);
+        var now = Instant.now();
+        List<VmSnapshot> newlyMatched = new ArrayList<>();
+
+        try (var client = connection.createClient(runContext)) {
+            var data = client.get("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/qemu");
+            for (var item : data) {
+                var status = item.path("status").asText("");
+                var vmidStr = String.valueOf(item.path("vmid").asInt());
+                var existing = state.get(vmidStr);
+
+                if (rTargetStatus.equalsIgnoreCase(status)
+                        && StatefulTriggerService.shouldFire(existing, status, StatefulTriggerInterface.On.CREATE_OR_UPDATE)) {
+                    newlyMatched.add(VmSnapshot.builder()
+                        .vmid(item.path("vmid").asInt())
+                        .name(item.path("name").asText(null))
+                        .status(status)
+                        .build());
+                }
+
+                updatedState.put(vmidStr, StatefulTriggerService.Entry.candidate(vmidStr, status, now));
+            }
+        }
+
+        StatefulTriggerService.writeState(runContext, stateKey, updatedState, Optional.empty());
+
+        if (newlyMatched.isEmpty()) {
+            return Optional.empty();
+        }
+
+        var output = Output.builder().vms(newlyMatched).build();
+        return Optional.of(TriggerService.generateExecution(this, conditionContext, context, output));
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class VmSnapshot {
+
+        @Schema(title = "VM ID")
+        private int vmid;
+
+        @Schema(title = "VM name")
+        private String name;
+
+        @Schema(title = "VM status")
+        private String status;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Output implements io.kestra.core.models.tasks.Output {
+
+        @Schema(title = "VMs matching the configured status")
+        private List<VmSnapshot> vms;
+    }
+}

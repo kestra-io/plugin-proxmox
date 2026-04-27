@@ -29,7 +29,7 @@ java {
 }
 
 group = "io.kestra.plugin"
-description = 'Plugin template for Kestra'
+description = 'Proxmox VE plugin for Kestra'
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = "UTF-8"
@@ -49,6 +49,7 @@ dependencies {
     annotationProcessor group: "io.kestra", name: "processor", version: kestraVersion
     compileOnly group: "io.kestra", name: "core", version: kestraVersion
     compileOnly group: "io.kestra", name: "script", version: kestraVersion
+
 }
 
 
@@ -91,6 +92,9 @@ dependencies {
     testImplementation group: "io.kestra", name: "repository-memory", version: kestraVersion
     testImplementation group: "io.kestra", name: "runner-memory", version: kestraVersion
     testImplementation group: "io.kestra", name: "storage-local", version: kestraVersion
+
+    // wiremock
+    testImplementation "org.wiremock:wiremock-jetty12"
 
     // test
     testImplementation "org.junit.jupiter:junit-jupiter-engine"
@@ -175,8 +179,8 @@ jar {
     manifest {
         attributes(
             "X-Kestra-Name": project.name,
-            "X-Kestra-Title": "Template",
-            "X-Kestra-Group": project.group + ".templates",
+            "X-Kestra-Title": "Proxmox",
+            "X-Kestra-Group": project.group + ".proxmox",
             "X-Kestra-Description": project.description,
             "X-Kestra-Version": project.version
         )
