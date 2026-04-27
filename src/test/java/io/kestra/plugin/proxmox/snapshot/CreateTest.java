@@ -2,6 +2,7 @@ package io.kestra.plugin.proxmox.snapshot;
 
 import io.kestra.core.models.property.Property;
 import io.kestra.plugin.proxmox.AbstractProxmoxTest;
+import io.kestra.plugin.proxmox.ResourceType;
 import org.junit.jupiter.api.Test;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
@@ -25,7 +26,7 @@ class CreateTest extends AbstractProxmoxTest {
             .vmName(Property.ofValue(VM_NAME))
             .snapName(Property.ofValue("snap1"))
             .snapDescription(Property.ofValue("Created by Kestra test"))
-            .resourceType(Property.ofValue("vm"))
+            .resourceType(Property.ofValue(ResourceType.vm))
             .build();
 
         var output = task.run(runContextFactory.of());
