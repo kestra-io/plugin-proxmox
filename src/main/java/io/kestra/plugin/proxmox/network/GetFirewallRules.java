@@ -125,7 +125,7 @@ public class GetFirewallRules extends AbstractTask<GetFirewallRules.Output> {
         @Schema(title = "Rule position") int pos,
         @Schema(title = "Rule type (in/out/forward/group)") String type,
         @Schema(title = "Action (ACCEPT/DROP/REJECT)") String action,
-        @Schema(title = "Whether the rule is enabled") int enable,
+        @Schema(title = "Whether the rule is enabled", description = "1 if enabled, 0 if disabled.") int enable,
         @Schema(title = "Source address or CIDR") String source,
         @Schema(title = "Destination address or CIDR") String dest,
         @Schema(title = "Protocol (tcp, udp, icmp, etc.)") String proto,
