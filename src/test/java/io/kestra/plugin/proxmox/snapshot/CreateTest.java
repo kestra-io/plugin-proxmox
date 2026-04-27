@@ -26,7 +26,7 @@ class CreateTest extends AbstractProxmoxTest {
             .vmName(Property.ofValue(VM_NAME))
             .snapName(Property.ofValue("snap1"))
             .snapDescription(Property.ofValue("Created by Kestra test"))
-            .resourceType(Property.ofValue(ResourceType.vm))
+            .resourceType(Property.ofValue(ResourceType.VM))
             .build();
 
         var output = task.run(runContextFactory.of());

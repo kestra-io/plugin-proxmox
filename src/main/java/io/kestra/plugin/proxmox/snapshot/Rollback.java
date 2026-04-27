@@ -67,7 +67,7 @@ public class Rollback extends AbstractTask<AbstractTask.Output> {
     @Schema(title = "Resource type", description = "Resource type: vm or container.")
     @Builder.Default
     @PluginProperty(group = "main")
-    private Property<ResourceType> resourceType = Property.ofValue(ResourceType.vm);
+    private Property<ResourceType> resourceType = Property.ofValue(ResourceType.VM);
 
     @Override
     public AbstractTask.Output run(RunContext runContext) throws Exception {
@@ -75,9 +75,9 @@ public class Rollback extends AbstractTask<AbstractTask.Output> {
         var rNode = runContext.render(node).as(String.class).orElseThrow();
         var rVmName = runContext.render(vmName).as(String.class).orElseThrow();
         var rSnapName = runContext.render(snapName).as(String.class).orElseThrow();
-        var rResourceType = runContext.render(resourceType).as(ResourceType.class).orElse(ResourceType.vm);
+        var rResourceType = runContext.render(resourceType).as(ResourceType.class).orElse(ResourceType.VM);
 
-        var apiSegment = ResourceType.container == rResourceType ? "lxc" : "qemu";
+        var apiSegment = ResourceType.CONTAINER == rResourceType ? "lxc" : "qemu";
 
         try (var client = createClient(runContext)) {
             var vmid = client.resolveVmId(rVmName);

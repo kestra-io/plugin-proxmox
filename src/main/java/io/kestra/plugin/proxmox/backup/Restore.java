@@ -78,7 +78,7 @@ public class Restore extends AbstractTask<AbstractTask.Output> {
     @Schema(title = "Resource type", description = "Resource type: vm or container.")
     @Builder.Default
     @PluginProperty(group = "main")
-    private Property<ResourceType> resourceType = Property.ofValue(ResourceType.vm);
+    private Property<ResourceType> resourceType = Property.ofValue(ResourceType.VM);
 
     @Schema(
         title = "Task timeout",
@@ -95,9 +95,9 @@ public class Restore extends AbstractTask<AbstractTask.Output> {
         var rVmId = runContext.render(vmId).as(Integer.class).orElseThrow();
         var rArchive = runContext.render(archive).as(String.class).orElseThrow();
         var rStorage = runContext.render(storage).as(String.class).orElseThrow();
-        var rResourceType = runContext.render(resourceType).as(ResourceType.class).orElse(ResourceType.vm);
+        var rResourceType = runContext.render(resourceType).as(ResourceType.class).orElse(ResourceType.VM);
 
-        var apiSegment = ResourceType.container == rResourceType ? "lxc" : "qemu";
+        var apiSegment = ResourceType.CONTAINER == rResourceType ? "lxc" : "qemu";
 
         try (var client = createClient(runContext)) {
             var params = new LinkedHashMap<String, String>();

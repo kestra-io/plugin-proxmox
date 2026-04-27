@@ -98,8 +98,8 @@ public class GetFirewallRules extends AbstractTask<GetFirewallRules.Output> {
         var encodedNode = URLEncoder.encode(rNode, StandardCharsets.UTF_8);
         String path;
         if (rVmId != null && !rVmId.isBlank()) {
-            var rType = runContext.render(resourceType).as(ResourceType.class).orElse(ResourceType.vm);
-            var apiType = ResourceType.container == rType ? "lxc" : "qemu";
+            var rType = runContext.render(resourceType).as(ResourceType.class).orElse(ResourceType.VM);
+            var apiType = ResourceType.CONTAINER == rType ? "lxc" : "qemu";
             path = "/nodes/" + encodedNode + "/" + apiType + "/" + URLEncoder.encode(rVmId, StandardCharsets.UTF_8) + "/firewall/rules";
         } else {
             path = "/nodes/" + encodedNode + "/firewall/rules";
