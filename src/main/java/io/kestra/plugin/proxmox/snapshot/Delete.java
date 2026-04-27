@@ -8,6 +8,8 @@ import io.kestra.core.runners.RunContext;
 import io.kestra.plugin.proxmox.AbstractTask;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -79,7 +81,7 @@ public class Delete extends AbstractTask<AbstractTask.Output> {
         try (var client = createClient(runContext)) {
             var vmid = client.resolveVmId(rVmName);
             logger.info("Deleting snapshot '{}' for {} vmid={}", rSnapName, rResourceType, vmid);
-            var result = client.delete("/nodes/" + rNode + "/" + apiSegment + "/" + vmid + "/snapshot/" + rSnapName);
+            var result = client.delete("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/" + apiSegment + "/" + vmid + "/snapshot/" + URLEncoder.encode(rSnapName, StandardCharsets.UTF_8));
             var upid = result.isNull() ? "" : result.asText();
             if (!upid.isBlank()) {
                 client.waitForTask(upid);

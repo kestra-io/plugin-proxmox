@@ -7,6 +7,8 @@ import io.kestra.core.models.annotations.Plugin;
 import io.kestra.core.runners.RunContext;
 import io.kestra.plugin.proxmox.AbstractTask;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -52,7 +54,7 @@ public class GetNodeStatus extends AbstractTask<GetNodeStatus.Output> {
         var rNode = runContext.render(node).as(String.class).orElseThrow();
 
         try (var client = createClient(runContext)) {
-            var data = client.get("/nodes/" + rNode + "/status");
+            var data = client.get("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/status");
             var status = MAPPER.treeToValue(data, NodeStatus.class);
             logger.info("Node '{}' status: uptime={}s", rNode, status.uptime());
             return new Output(status);

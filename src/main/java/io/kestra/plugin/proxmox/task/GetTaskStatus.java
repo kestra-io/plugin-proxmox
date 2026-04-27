@@ -65,7 +65,7 @@ public class GetTaskStatus extends AbstractTask<GetTaskStatus.Output> {
 
         try (var client = createClient(runContext)) {
             var encodedUpid = URLEncoder.encode(rUpid, StandardCharsets.UTF_8);
-            var data = client.get("/nodes/" + rNode + "/tasks/" + encodedUpid + "/status");
+            var data = client.get("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/tasks/" + encodedUpid + "/status");
             var status = MAPPER.treeToValue(data, TaskStatus.class);
             return new Output(status);
         }

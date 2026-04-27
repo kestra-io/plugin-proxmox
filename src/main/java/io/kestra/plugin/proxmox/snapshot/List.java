@@ -17,6 +17,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 @SuperBuilder
@@ -78,7 +80,7 @@ public class List extends AbstractTask<List.Output> {
 
         try (var client = createClient(runContext)) {
             var vmid = client.resolveVmId(rVmName);
-            var data = client.get("/nodes/" + rNode + "/" + apiSegment + "/" + vmid + "/snapshot");
+            var data = client.get("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/" + apiSegment + "/" + vmid + "/snapshot");
             var snapshots = new ArrayList<SnapshotInfo>();
             for (var item : data) {
                 snapshots.add(MAPPER.treeToValue(item, SnapshotInfo.class));

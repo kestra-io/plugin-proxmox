@@ -15,6 +15,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,13 +96,14 @@ public class GetFirewallRules extends AbstractTask<GetFirewallRules.Output> {
         var rNode = runContext.render(node).as(String.class).orElseThrow();
         var rVmId = runContext.render(vmId).as(String.class).orElse(null);
 
+        var encodedNode = URLEncoder.encode(rNode, StandardCharsets.UTF_8);
         String path;
         if (rVmId != null && !rVmId.isBlank()) {
             var rType = runContext.render(resourceType).as(String.class).orElse("vm");
             var apiType = "container".equalsIgnoreCase(rType) ? "lxc" : "qemu";
-            path = "/nodes/" + rNode + "/" + apiType + "/" + rVmId + "/firewall/rules";
+            path = "/nodes/" + encodedNode + "/" + apiType + "/" + URLEncoder.encode(rVmId, StandardCharsets.UTF_8) + "/firewall/rules";
         } else {
-            path = "/nodes/" + rNode + "/firewall/rules";
+            path = "/nodes/" + encodedNode + "/firewall/rules";
         }
 
         try (var client = createClient(runContext)) {

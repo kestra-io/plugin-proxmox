@@ -8,6 +8,8 @@ import io.kestra.core.runners.RunContext;
 import io.kestra.plugin.proxmox.AbstractTask;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -60,7 +62,7 @@ public class Reboot extends AbstractTask<AbstractTask.Output> {
         try (var client = createClient(runContext)) {
             var vmid = client.resolveVmId(rVmName);
             logger.info("Rebooting VM {} (vmid={})", rVmName, vmid);
-            var upid = client.postAndWait("/nodes/" + rNode + "/qemu/" + vmid + "/status/reboot", null);
+            var upid = client.postAndWait("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/qemu/" + vmid + "/status/reboot", null);
             logger.info("VM {} rebooted", rVmName);
             return AbstractTask.Output.of(String.valueOf(vmid), rVmName, upid);
         }

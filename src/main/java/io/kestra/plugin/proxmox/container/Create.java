@@ -15,6 +15,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 
 @SuperBuilder
@@ -131,12 +133,13 @@ public class Create extends AbstractTask<AbstractTask.Output> {
             }
 
             logger.info("Creating LXC container vmid={} on node '{}'", rVmId, rNode);
-            var upid = client.postAndWait("/nodes/" + rNode + "/lxc", params);
+            var encodedNode = URLEncoder.encode(rNode, StandardCharsets.UTF_8);
+            var upid = client.postAndWait("/nodes/" + encodedNode + "/lxc", params);
             logger.info("Container vmid={} created", rVmId);
 
             if (rPowerOn) {
                 logger.info("Starting container vmid={}", rVmId);
-                client.postAndWait("/nodes/" + rNode + "/lxc/" + rVmId + "/status/start", null);
+                client.postAndWait("/nodes/" + encodedNode + "/lxc/" + rVmId + "/status/start", null);
             }
 
             return AbstractTask.Output.of(String.valueOf(rVmId), rHostname, upid);

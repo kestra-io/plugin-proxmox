@@ -14,6 +14,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 
 @SuperBuilder
@@ -75,7 +77,7 @@ public class Migrate extends AbstractTask<AbstractTask.Output> {
             params.put("target", rTargetNode);
 
             logger.info("Migrating container {} (vmid={}) to node '{}'", rVmName, vmid, rTargetNode);
-            var upid = client.postAndWait("/nodes/" + rNode + "/lxc/" + vmid + "/migrate", params);
+            var upid = client.postAndWait("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/lxc/" + vmid + "/migrate", params);
             logger.info("Container {} migrated to '{}'", rVmName, rTargetNode);
             return AbstractTask.Output.of(String.valueOf(vmid), rVmName, upid);
         }

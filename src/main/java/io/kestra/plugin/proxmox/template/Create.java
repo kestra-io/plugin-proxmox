@@ -9,6 +9,8 @@ import io.kestra.core.runners.RunContext;
 import io.kestra.plugin.proxmox.AbstractTask;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -64,7 +66,7 @@ public class Create extends AbstractTask<VoidOutput> {
         try (var client = createClient(runContext)) {
             var vmid = client.resolveVmId(rVmName);
             logger.info("Converting VM {} (vmid={}) to template", rVmName, vmid);
-            client.post("/nodes/" + rNode + "/qemu/" + vmid + "/template", null);
+            client.post("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/qemu/" + vmid + "/template", null);
             logger.info("VM {} converted to template", rVmName);
         }
 

@@ -14,6 +14,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 
 @SuperBuilder
@@ -81,7 +83,7 @@ public class Clone extends AbstractTask<AbstractTask.Output> {
             }
 
             logger.info("Cloning container {} (vmid={}) to vmid={}", rVmName, vmid, rNewId);
-            var upid = client.postAndWait("/nodes/" + rNode + "/lxc/" + vmid + "/clone", params);
+            var upid = client.postAndWait("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/lxc/" + vmid + "/clone", params);
             logger.info("Container cloned to vmid={}", rNewId);
             return AbstractTask.Output.of(String.valueOf(rNewId), rNewName, upid);
         }

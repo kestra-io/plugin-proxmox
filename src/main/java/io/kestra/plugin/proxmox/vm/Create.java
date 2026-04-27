@@ -15,6 +15,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -134,12 +136,13 @@ public class Create extends AbstractTask<AbstractTask.Output> {
             }
 
             logger.info("Creating VM '{}' (vmid={}) on node '{}'", rVmName, rVmId, rNode);
-            var upid = client.postAndWait("/nodes/" + rNode + "/qemu", params);
+            var encodedNode = URLEncoder.encode(rNode, StandardCharsets.UTF_8);
+            var upid = client.postAndWait("/nodes/" + encodedNode + "/qemu", params);
             logger.info("VM '{}' created", rVmName);
 
             if (rPowerOn) {
                 logger.info("Starting VM '{}' (vmid={})", rVmName, rVmId);
-                client.postAndWait("/nodes/" + rNode + "/qemu/" + rVmId + "/status/start", null);
+                client.postAndWait("/nodes/" + encodedNode + "/qemu/" + rVmId + "/status/start", null);
                 logger.info("VM '{}' started", rVmName);
             }
 

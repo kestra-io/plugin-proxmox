@@ -15,6 +15,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 
 @SuperBuilder
@@ -93,7 +95,7 @@ public class Create extends AbstractTask<AbstractTask.Output> {
             params.put("compress", rCompress);
 
             logger.info("Creating backup for vmid={} on storage '{}' (mode={}, compress={})", vmid, rStorage, rMode, rCompress);
-            var result = client.post("/nodes/" + rNode + "/vzdump", params);
+            var result = client.post("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/vzdump", params);
             var upid = result.isNull() ? "" : result.asText();
             if (!upid.isBlank()) {
                 client.waitForTask(upid, 3600);

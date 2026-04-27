@@ -14,6 +14,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 
 @SuperBuilder
@@ -75,7 +77,7 @@ public class Migrate extends AbstractTask<AbstractTask.Output> {
             params.put("target", rTargetNode);
 
             logger.info("Migrating VM {} (vmid={}) to node '{}'", rVmName, vmid, rTargetNode);
-            var upid = client.postAndWait("/nodes/" + rNode + "/qemu/" + vmid + "/migrate", params);
+            var upid = client.postAndWait("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/qemu/" + vmid + "/migrate", params);
             logger.info("VM {} migrated to '{}'", rVmName, rTargetNode);
             return AbstractTask.Output.of(String.valueOf(vmid), rVmName, upid);
         }

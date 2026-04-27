@@ -8,6 +8,8 @@ import io.kestra.core.runners.RunContext;
 import io.kestra.plugin.proxmox.AbstractTask;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -60,7 +62,7 @@ public class Delete extends AbstractTask<AbstractTask.Output> {
         try (var client = createClient(runContext)) {
             var vmid = client.resolveVmId(rVmName);
             logger.info("Deleting container {} (vmid={})", rVmName, vmid);
-            var result = client.delete("/nodes/" + rNode + "/lxc/" + vmid);
+            var result = client.delete("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/lxc/" + vmid);
             var upid = result.isNull() ? "" : result.asText();
             if (!upid.isBlank()) {
                 client.waitForTask(upid);

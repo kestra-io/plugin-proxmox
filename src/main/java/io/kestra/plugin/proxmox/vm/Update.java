@@ -15,6 +15,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -92,7 +94,7 @@ public class Update extends AbstractTask<VoidOutput> {
             rConfig.forEach((k, v) -> params.put(k, String.valueOf(v)));
 
             logger.info("Updating VM {} (vmid={}) config: {}", rVmName, vmid, params.keySet());
-            client.put("/nodes/" + rNode + "/qemu/" + vmid + "/config", params);
+            client.put("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/qemu/" + vmid + "/config", params);
             logger.info("VM {} config updated", rVmName);
         }
 

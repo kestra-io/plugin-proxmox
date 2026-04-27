@@ -15,6 +15,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,7 +71,7 @@ public class ListResources extends AbstractTask<ListResources.Output> {
 
         var path = "/cluster/resources";
         if (rTypeFilter != null && !rTypeFilter.isBlank()) {
-            path += "?type=" + rTypeFilter;
+            path += "?type=" + URLEncoder.encode(rTypeFilter, StandardCharsets.UTF_8);
         }
 
         try (var client = createClient(runContext)) {

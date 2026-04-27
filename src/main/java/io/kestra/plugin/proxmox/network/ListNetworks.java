@@ -13,6 +13,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +57,7 @@ public class ListNetworks extends AbstractTask<ListNetworks.Output> {
         var rNode = runContext.render(node).as(String.class).orElseThrow();
 
         try (var client = createClient(runContext)) {
-            var data = client.get("/nodes/" + rNode + "/network");
+            var data = client.get("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/network");
             var interfaces = new ArrayList<NetworkInterface>();
             for (var item : data) {
                 interfaces.add(MAPPER.treeToValue(item, NetworkInterface.class));

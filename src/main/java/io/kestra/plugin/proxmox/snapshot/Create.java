@@ -15,6 +15,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 
 @SuperBuilder
@@ -93,7 +95,7 @@ public class Create extends AbstractTask<AbstractTask.Output> {
             }
 
             logger.info("Creating snapshot '{}' for {} vmid={}", rSnapName, rResourceType, vmid);
-            var upid = client.postAndWait("/nodes/" + rNode + "/" + apiSegment + "/" + vmid + "/snapshot", params);
+            var upid = client.postAndWait("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/" + apiSegment + "/" + vmid + "/snapshot", params);
             logger.info("Snapshot '{}' created", rSnapName);
             return AbstractTask.Output.of(String.valueOf(vmid), rVmName, upid);
         }

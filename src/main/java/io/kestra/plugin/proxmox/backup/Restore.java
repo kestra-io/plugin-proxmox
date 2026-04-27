@@ -15,6 +15,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 
 @SuperBuilder
@@ -94,7 +96,7 @@ public class Restore extends AbstractTask<AbstractTask.Output> {
             params.put("storage", rStorage);
 
             logger.info("Restoring {} backup '{}' as vmid={}", rResourceType, rArchive, rVmId);
-            var result = client.post("/nodes/" + rNode + "/" + apiSegment, params);
+            var result = client.post("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/" + apiSegment, params);
             var upid = result.isNull() ? "" : result.asText();
             if (!upid.isBlank()) {
                 client.waitForTask(upid, 3600);

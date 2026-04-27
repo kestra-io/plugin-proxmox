@@ -8,6 +8,8 @@ import io.kestra.core.runners.RunContext;
 import io.kestra.plugin.proxmox.AbstractTask;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -79,7 +81,7 @@ public class Rollback extends AbstractTask<AbstractTask.Output> {
         try (var client = createClient(runContext)) {
             var vmid = client.resolveVmId(rVmName);
             logger.info("Rolling back {} vmid={} to snapshot '{}'", rResourceType, vmid, rSnapName);
-            var upid = client.postAndWait("/nodes/" + rNode + "/" + apiSegment + "/" + vmid + "/snapshot/" + rSnapName + "/rollback", null);
+            var upid = client.postAndWait("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/" + apiSegment + "/" + vmid + "/snapshot/" + URLEncoder.encode(rSnapName, StandardCharsets.UTF_8) + "/rollback", null);
             logger.info("Rollback to snapshot '{}' completed", rSnapName);
             return AbstractTask.Output.of(String.valueOf(vmid), rVmName, upid);
         }

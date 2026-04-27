@@ -25,6 +25,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -146,7 +148,7 @@ public class Trigger extends AbstractTrigger implements PollingTriggerInterface,
         List<VmSnapshot> newlyMatched = new ArrayList<>();
 
         try (var client = ClientFactory.create(rHost, rPort, rNode, rUsername, rPassword, rTokenId, rTokenSecret, rVerifySsl, runContext)) {
-            var data = client.get("/nodes/" + rNode + "/qemu");
+            var data = client.get("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/qemu");
             for (var item : data) {
                 var status = item.path("status").asText("");
                 var vmidStr = String.valueOf(item.path("vmid").asInt());
