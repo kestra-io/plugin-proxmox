@@ -24,7 +24,7 @@ public abstract class AbstractTask<T extends io.kestra.core.models.tasks.Output>
         description = "Hostname or IP address of the Proxmox VE node (no scheme, no port)."
     )
     @NotNull
-    @PluginProperty(group = "main")
+    @PluginProperty(group = "connection")
     protected Property<String> host;
 
     @Schema(
@@ -40,35 +40,35 @@ public abstract class AbstractTask<T extends io.kestra.core.models.tasks.Output>
         description = "Name of the cluster node that scopes all API calls (e.g. pve, node1)."
     )
     @NotNull
-    @PluginProperty(group = "main")
+    @PluginProperty(group = "connection")
     protected Property<String> node;
 
     @Schema(
         title = "Username",
         description = "PAM or PVE user in the form user@realm (e.g. root@pam). Required when using ticket-based auth."
     )
-    @PluginProperty(group = "main")
+    @PluginProperty(group = "connection")
     protected Property<String> username;
 
     @Schema(
         title = "Password",
         description = "Password for ticket-based authentication."
     )
-    @PluginProperty(group = "main", secret = true)
+    @PluginProperty(group = "connection", secret = true)
     protected Property<String> password;
 
     @Schema(
         title = "API token ID",
         description = "Full token identifier in the form user@realm!tokenname (e.g. root@pam!mytoken). Use together with tokenSecret."
     )
-    @PluginProperty(group = "main")
+    @PluginProperty(group = "connection")
     protected Property<String> tokenId;
 
     @Schema(
         title = "API token secret",
         description = "The UUID secret associated with the token ID."
     )
-    @PluginProperty(group = "main", secret = true)
+    @PluginProperty(group = "connection", secret = true)
     protected Property<String> tokenSecret;
 
     @Schema(
