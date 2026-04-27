@@ -24,6 +24,7 @@ import java.util.ArrayList;
     title = "List QEMU VM templates in a Proxmox VE cluster",
     description = """
         Retrieves cluster resources of type vm from /cluster/resources and filters for entries where template=1.
+        The node property is used to connect to the API but does not filter results to that node.
         """
 )
 @Plugin(

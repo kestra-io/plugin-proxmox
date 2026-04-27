@@ -30,6 +30,7 @@ import java.util.List;
     description = """
         Retrieves resources from /cluster/resources.
         Optionally filter by type: vm, node, storage, or pool.
+        The node property is used to connect to the API but does not filter results to that node.
         """
 )
 @Plugin(
