@@ -14,7 +14,7 @@ import io.kestra.core.models.triggers.TriggerOutput;
 import io.kestra.core.models.triggers.TriggerService;
 import io.kestra.core.models.triggers.StatefulTriggerInterface;
 import io.kestra.core.models.triggers.StatefulTriggerService;
-import io.kestra.plugin.proxmox.ClientFactory;
+import io.kestra.plugin.proxmox.ProxmoxConnection;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -59,10 +59,11 @@ import java.util.Optional;
                   - id: watch
                     type: io.kestra.plugin.proxmox.vm.Trigger
                     interval: PT1M
-                    host: "{{ secret('PROXMOX_HOST') }}"
-                    username: "{{ secret('PROXMOX_USERNAME') }}"
-                    password: "{{ secret('PROXMOX_PASSWORD') }}"
-                    node: pve
+                    connection:
+                      host: "{{ secret('PROXMOX_HOST') }}"
+                      username: "{{ secret('PROXMOX_USERNAME') }}"
+                      password: "{{ secret('PROXMOX_PASSWORD') }}"
+                      node: pve
                     targetStatus: stopped
 
                 tasks:
@@ -78,41 +79,10 @@ public class Trigger extends AbstractTrigger implements PollingTriggerInterface,
     @Builder.Default
     private final Duration interval = Duration.ofMinutes(2);
 
-    @Schema(title = "Proxmox host")
+    @Schema(title = "Proxmox connection")
     @NotNull
-    @PluginProperty(group = "main")
-    protected Property<String> host;
-
-    @Schema(title = "API port", description = "Defaults to 8006.")
-    @Builder.Default
-    @PluginProperty(group = "connection")
-    protected Property<Integer> port = Property.ofValue(8006);
-
-    @Schema(title = "Proxmox node name")
-    @NotNull
-    @PluginProperty(group = "main")
-    protected Property<String> node;
-
-    @Schema(title = "Username")
-    @PluginProperty(group = "main")
-    protected Property<String> username;
-
-    @Schema(title = "Password")
-    @PluginProperty(group = "main", secret = true)
-    protected Property<String> password;
-
-    @Schema(title = "API token ID")
-    @PluginProperty(group = "main")
-    protected Property<String> tokenId;
-
-    @Schema(title = "API token secret")
-    @PluginProperty(group = "main", secret = true)
-    protected Property<String> tokenSecret;
-
-    @Schema(title = "Verify SSL", description = "Defaults to false.")
-    @Builder.Default
-    @PluginProperty(group = "advanced")
-    protected Property<Boolean> verifySsl = Property.ofValue(false);
+    @PluginProperty
+    private ProxmoxConnection connection;
 
     @Schema(
         title = "Target VM status",
@@ -131,14 +101,7 @@ public class Trigger extends AbstractTrigger implements PollingTriggerInterface,
     public Optional<Execution> evaluate(ConditionContext conditionContext, TriggerContext context) throws Exception {
         var runContext = conditionContext.getRunContext();
 
-        var rHost = runContext.render(host).as(String.class).orElseThrow();
-        var rPort = runContext.render(port).as(Integer.class).orElse(8006);
-        var rNode = runContext.render(node).as(String.class).orElseThrow();
-        var rUsername = runContext.render(username).as(String.class).orElse(null);
-        var rPassword = runContext.render(password).as(String.class).orElse(null);
-        var rTokenId = runContext.render(tokenId).as(String.class).orElse(null);
-        var rTokenSecret = runContext.render(tokenSecret).as(String.class).orElse(null);
-        var rVerifySsl = runContext.render(verifySsl).as(Boolean.class).orElse(false);
+        var rNode = runContext.render(connection.getNode()).as(String.class).orElseThrow();
         var rTargetStatus = runContext.render(targetStatus).as(String.class).orElseThrow();
 
         var stateKey = StatefulTriggerService.defaultKey(context.getNamespace(), context.getFlowId(), context.getTriggerId());
@@ -147,7 +110,7 @@ public class Trigger extends AbstractTrigger implements PollingTriggerInterface,
         var now = Instant.now();
         List<VmSnapshot> newlyMatched = new ArrayList<>();
 
-        try (var client = ClientFactory.create(rHost, rPort, rNode, rUsername, rPassword, rTokenId, rTokenSecret, rVerifySsl, runContext)) {
+        try (var client = connection.createClient(runContext)) {
             var data = client.get("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/qemu");
             for (var item : data) {
                 var status = item.path("status").asText("");
