@@ -44,6 +44,9 @@ import java.util.Optional;
     description = """
         Polls /nodes/{node}/qemu on the configured interval and fires when any VM's status matches
         the configured targetStatus (e.g. running, stopped). Returns the list of matching VMs.
+        Uses stateful change detection: a VM that remains in the target status across consecutive polls
+        will only trigger once, not on every poll. It will trigger again if the VM leaves and re-enters
+        the target status.
         """
 )
 @Plugin(

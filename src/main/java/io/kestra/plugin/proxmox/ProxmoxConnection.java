@@ -10,6 +10,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+@Schema(
+    title = "Proxmox connection",
+    description = "Connection settings for the Proxmox VE API. Authenticate with either a username/password pair (ticket-based) or a tokenId/tokenSecret pair (API token)."
+)
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 @Getter
