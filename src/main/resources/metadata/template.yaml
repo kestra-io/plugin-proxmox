@@ -1,0 +1,8 @@
+group: io.kestra.plugin.proxmox.template
+name: "template"
+title: "Proxmox VE — template"
+description: "Proxmox VE template management tasks."
+body: ""
+videos: []
+createdBy: "Kestra Core Team"
+managedBy: "Kestra Core Team"

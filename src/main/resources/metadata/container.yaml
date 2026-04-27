@@ -1,0 +1,8 @@
+group: io.kestra.plugin.proxmox.container
+name: "container"
+title: "Proxmox VE — container"
+description: "Proxmox VE container management tasks."
+body: ""
+videos: []
+createdBy: "Kestra Core Team"
+managedBy: "Kestra Core Team"

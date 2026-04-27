@@ -1,0 +1,8 @@
+group: io.kestra.plugin.proxmox.task
+name: "task"
+title: "Proxmox VE — task"
+description: "Proxmox VE task management tasks."
+body: ""
+videos: []
+createdBy: "Kestra Core Team"
+managedBy: "Kestra Core Team"
