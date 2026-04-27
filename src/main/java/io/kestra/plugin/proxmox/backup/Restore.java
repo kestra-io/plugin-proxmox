@@ -6,6 +6,7 @@ import io.kestra.core.models.annotations.PluginProperty;
 import io.kestra.core.models.property.Property;
 import io.kestra.core.runners.RunContext;
 import io.kestra.plugin.proxmox.AbstractTask;
+import io.kestra.plugin.proxmox.ResourceType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -73,10 +74,10 @@ public class Restore extends AbstractTask<AbstractTask.Output> {
     @PluginProperty(group = "main")
     private Property<String> storage;
 
-    @Schema(title = "Resource type", description = "vm for QEMU restore, container for LXC restore. Defaults to vm.")
+    @Schema(title = "Resource type", description = "Resource type: vm or container.")
     @Builder.Default
     @PluginProperty(group = "main")
-    private Property<String> resourceType = Property.ofValue("vm");
+    private Property<ResourceType> resourceType = Property.ofValue(ResourceType.vm);
 
     @Override
     public AbstractTask.Output run(RunContext runContext) throws Exception {
@@ -85,9 +86,9 @@ public class Restore extends AbstractTask<AbstractTask.Output> {
         var rVmId = runContext.render(vmId).as(Integer.class).orElseThrow();
         var rArchive = runContext.render(archive).as(String.class).orElseThrow();
         var rStorage = runContext.render(storage).as(String.class).orElseThrow();
-        var rResourceType = runContext.render(resourceType).as(String.class).orElse("vm");
+        var rResourceType = runContext.render(resourceType).as(ResourceType.class).orElse(ResourceType.vm);
 
-        var apiSegment = "container".equalsIgnoreCase(rResourceType) ? "lxc" : "qemu";
+        var apiSegment = ResourceType.container == rResourceType ? "lxc" : "qemu";
 
         try (var client = createClient(runContext)) {
             var params = new LinkedHashMap<String, String>();

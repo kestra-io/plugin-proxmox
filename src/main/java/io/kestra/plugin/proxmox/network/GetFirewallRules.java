@@ -8,6 +8,7 @@ import io.kestra.core.models.annotations.PluginProperty;
 import io.kestra.core.models.property.Property;
 import io.kestra.core.runners.RunContext;
 import io.kestra.plugin.proxmox.AbstractTask;
+import io.kestra.plugin.proxmox.ResourceType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -83,10 +84,10 @@ public class GetFirewallRules extends AbstractTask<GetFirewallRules.Output> {
 
     @Schema(
         title = "Resource type",
-        description = "Required when vmId is set. Use 'vm' for QEMU VMs or 'container' for LXC containers."
+        description = "Resource type: vm or container."
     )
     @PluginProperty(group = "main")
-    private Property<String> resourceType;
+    private Property<ResourceType> resourceType;
 
     @Override
     public Output run(RunContext runContext) throws Exception {
@@ -97,8 +98,8 @@ public class GetFirewallRules extends AbstractTask<GetFirewallRules.Output> {
         var encodedNode = URLEncoder.encode(rNode, StandardCharsets.UTF_8);
         String path;
         if (rVmId != null && !rVmId.isBlank()) {
-            var rType = runContext.render(resourceType).as(String.class).orElse("vm");
-            var apiType = "container".equalsIgnoreCase(rType) ? "lxc" : "qemu";
+            var rType = runContext.render(resourceType).as(ResourceType.class).orElse(ResourceType.vm);
+            var apiType = ResourceType.container == rType ? "lxc" : "qemu";
             path = "/nodes/" + encodedNode + "/" + apiType + "/" + URLEncoder.encode(rVmId, StandardCharsets.UTF_8) + "/firewall/rules";
         } else {
             path = "/nodes/" + encodedNode + "/firewall/rules";
