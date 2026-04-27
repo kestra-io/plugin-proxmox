@@ -185,7 +185,10 @@ public class ProxmoxClient implements AutoCloseable {
         try {
             return http.request(request, String.class);
         } catch (HttpClientResponseException e) {
-            throw new RuntimeException(context + " failed with HTTP " + e.getResponse().getStatus().getCode() + ": " + e.getResponse().getBody());
+            var bodyObj = e.getResponse().getBody();
+            var body = bodyObj != null ? bodyObj.toString() : "";
+            var truncated = body.length() > 200 ? body.substring(0, 200) + "…" : body;
+            throw new RuntimeException(context + " failed with HTTP " + e.getResponse().getStatus().getCode() + ": " + truncated);
         }
     }
 
