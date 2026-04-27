@@ -1,7 +1,6 @@
 package io.kestra.plugin.proxmox.vm;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kestra.core.models.annotations.Example;
 import io.kestra.core.models.annotations.Plugin;
 import io.kestra.core.models.annotations.PluginProperty;
@@ -13,6 +12,8 @@ import io.kestra.core.models.triggers.PollingTriggerInterface;
 import io.kestra.core.models.triggers.TriggerContext;
 import io.kestra.core.models.triggers.TriggerOutput;
 import io.kestra.core.models.triggers.TriggerService;
+import io.kestra.core.models.triggers.StatefulTriggerInterface;
+import io.kestra.core.models.triggers.StatefulTriggerService;
 import io.kestra.plugin.proxmox.ClientFactory;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
@@ -25,7 +26,9 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,8 +72,6 @@ import java.util.Optional;
     }
 )
 public class Trigger extends AbstractTrigger implements PollingTriggerInterface, TriggerOutput<Trigger.Output> {
-
-    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Builder.Default
     private final Duration interval = Duration.ofMinutes(2);
@@ -138,27 +139,39 @@ public class Trigger extends AbstractTrigger implements PollingTriggerInterface,
         var rVerifySsl = runContext.render(verifySsl).as(Boolean.class).orElse(false);
         var rTargetStatus = runContext.render(targetStatus).as(String.class).orElseThrow();
 
-        List<VmSnapshot> matched = new ArrayList<>();
+        var stateKey = StatefulTriggerService.defaultKey(context.getNamespace(), context.getFlowId(), context.getTriggerId());
+        var state = StatefulTriggerService.readState(runContext, stateKey, Optional.empty());
+        var updatedState = new HashMap<>(state);
+        var now = Instant.now();
+        List<VmSnapshot> newlyMatched = new ArrayList<>();
 
         try (var client = ClientFactory.create(rHost, rPort, rNode, rUsername, rPassword, rTokenId, rTokenSecret, rVerifySsl, runContext)) {
             var data = client.get("/nodes/" + rNode + "/qemu");
             for (var item : data) {
                 var status = item.path("status").asText("");
-                if (rTargetStatus.equalsIgnoreCase(status)) {
-                    matched.add(VmSnapshot.builder()
+                var vmidStr = String.valueOf(item.path("vmid").asInt());
+                var existing = state.get(vmidStr);
+
+                if (rTargetStatus.equalsIgnoreCase(status)
+                        && StatefulTriggerService.shouldFire(existing, status, StatefulTriggerInterface.On.CREATE_OR_UPDATE)) {
+                    newlyMatched.add(VmSnapshot.builder()
                         .vmid(item.path("vmid").asInt())
                         .name(item.path("name").asText(null))
                         .status(status)
                         .build());
                 }
+
+                updatedState.put(vmidStr, StatefulTriggerService.Entry.candidate(vmidStr, status, now));
             }
         }
 
-        if (matched.isEmpty()) {
+        StatefulTriggerService.writeState(runContext, stateKey, updatedState, Optional.empty());
+
+        if (newlyMatched.isEmpty()) {
             return Optional.empty();
         }
 
-        var output = Output.builder().vms(matched).build();
+        var output = Output.builder().vms(newlyMatched).build();
         return Optional.of(TriggerService.generateExecution(this, conditionContext, context, output));
     }
 
