@@ -77,17 +77,17 @@ public class Create extends AbstractTask<AbstractTask.Output> {
 
     @Schema(title = "Number of CPU cores", description = "Defaults to 1.")
     @Builder.Default
-    @PluginProperty(group = "resources")
+    @PluginProperty(group = "advanced")
     private Property<Integer> cores = Property.ofValue(1);
 
     @Schema(title = "Memory in MiB", description = "Defaults to 512.")
     @Builder.Default
-    @PluginProperty(group = "resources")
+    @PluginProperty(group = "advanced")
     private Property<Integer> memory = Property.ofValue(512);
 
     @Schema(title = "Root filesystem", description = "Storage and size, e.g. local-lvm:4.")
     @Builder.Default
-    @PluginProperty(group = "resources")
+    @PluginProperty(group = "advanced")
     private Property<String> rootfs = Property.ofValue("local-lvm:4");
 
     @Schema(title = "Unprivileged container", description = "Create an unprivileged container. Defaults to true.")
@@ -97,7 +97,7 @@ public class Create extends AbstractTask<AbstractTask.Output> {
 
     @Schema(title = "Network interface", description = "LXC net string, e.g. name=eth0,bridge=vmbr0,ip=dhcp.")
     @Builder.Default
-    @PluginProperty(group = "resources")
+    @PluginProperty(group = "advanced")
     private Property<String> net = Property.ofValue("name=eth0,bridge=vmbr0,ip=dhcp");
 
     @Schema(title = "Start after creation", description = "Defaults to false.")

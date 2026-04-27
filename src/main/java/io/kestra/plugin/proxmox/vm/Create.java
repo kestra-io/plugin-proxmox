@@ -74,12 +74,12 @@ public class Create extends AbstractTask<AbstractTask.Output> {
 
     @Schema(title = "Number of CPU cores", description = "Defaults to 1.")
     @Builder.Default
-    @PluginProperty(group = "resources")
+    @PluginProperty(group = "advanced")
     private Property<Integer> cores = Property.ofValue(1);
 
     @Schema(title = "Memory in MiB", description = "Defaults to 1024.")
     @Builder.Default
-    @PluginProperty(group = "resources")
+    @PluginProperty(group = "advanced")
     private Property<Integer> memory = Property.ofValue(1024);
 
     @Schema(
@@ -87,7 +87,7 @@ public class Create extends AbstractTask<AbstractTask.Output> {
         description = "Proxmox disk string, e.g. local-lvm:8 for an 8 GiB virtio disk on local-lvm storage."
     )
     @Builder.Default
-    @PluginProperty(group = "resources")
+    @PluginProperty(group = "advanced")
     private Property<String> disk = Property.ofValue("local-lvm:8");
 
     @Schema(
@@ -95,7 +95,7 @@ public class Create extends AbstractTask<AbstractTask.Output> {
         description = "Proxmox net string, e.g. virtio,bridge=vmbr0."
     )
     @Builder.Default
-    @PluginProperty(group = "resources")
+    @PluginProperty(group = "advanced")
     private Property<String> net = Property.ofValue("virtio,bridge=vmbr0");
 
     @Schema(

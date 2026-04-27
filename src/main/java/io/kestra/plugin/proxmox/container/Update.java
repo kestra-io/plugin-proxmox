@@ -63,11 +63,11 @@ public class Update extends AbstractTask<VoidOutput> {
     private Property<String> vmName;
 
     @Schema(title = "Number of CPU cores")
-    @PluginProperty(group = "resources")
+    @PluginProperty(group = "advanced")
     private Property<Integer> cores;
 
     @Schema(title = "Memory in MiB")
-    @PluginProperty(group = "resources")
+    @PluginProperty(group = "advanced")
     private Property<Integer> memory;
 
     @Schema(
