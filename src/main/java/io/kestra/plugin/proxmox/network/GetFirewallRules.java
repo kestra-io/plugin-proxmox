@@ -1,8 +1,8 @@
 package io.kestra.plugin.proxmox.network;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kestra.core.models.annotations.Example;
+import io.kestra.core.serializers.JacksonMapper;
 import io.kestra.core.models.annotations.Plugin;
 import io.kestra.core.models.annotations.PluginProperty;
 import io.kestra.core.models.property.Property;
@@ -74,8 +74,6 @@ import java.util.List;
 )
 public class GetFirewallRules extends AbstractTask<GetFirewallRules.Output> {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
     @Schema(
         title = "VM or container ID",
         description = "When set, retrieves firewall rules scoped to this VM or container instead of the node."
@@ -110,7 +108,7 @@ public class GetFirewallRules extends AbstractTask<GetFirewallRules.Output> {
             var data = client.get(path);
             var rules = new ArrayList<FirewallRule>();
             for (var item : data) {
-                rules.add(MAPPER.treeToValue(item, FirewallRule.class));
+                rules.add(JacksonMapper.ofJson().treeToValue(item, FirewallRule.class));
             }
             logger.info("Found {} firewall rules", rules.size());
             return new Output(rules);

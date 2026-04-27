@@ -1,8 +1,8 @@
 package io.kestra.plugin.proxmox.snapshot;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kestra.core.models.annotations.Example;
+import io.kestra.core.serializers.JacksonMapper;
 import io.kestra.core.models.annotations.Plugin;
 import io.kestra.core.models.annotations.PluginProperty;
 import io.kestra.core.models.property.Property;
@@ -57,8 +57,6 @@ import java.util.ArrayList;
 )
 public class List extends AbstractTask<List.Output> {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
     @Schema(title = "VM or container name or ID")
     @NotNull
     @PluginProperty(group = "main")
@@ -83,7 +81,7 @@ public class List extends AbstractTask<List.Output> {
             var data = client.get("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/" + apiSegment + "/" + vmid + "/snapshot");
             var snapshots = new ArrayList<SnapshotInfo>();
             for (var item : data) {
-                snapshots.add(MAPPER.treeToValue(item, SnapshotInfo.class));
+                snapshots.add(JacksonMapper.ofJson().treeToValue(item, SnapshotInfo.class));
             }
             logger.info("Found {} snapshots for {} vmid={}", snapshots.size(), rResourceType, vmid);
             return new Output(snapshots);

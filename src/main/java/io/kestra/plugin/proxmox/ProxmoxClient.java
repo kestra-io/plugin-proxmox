@@ -1,8 +1,8 @@
 package io.kestra.plugin.proxmox;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kestra.core.http.HttpRequest;
+import io.kestra.core.serializers.JacksonMapper;
 import io.kestra.core.http.HttpResponse;
 import io.kestra.core.http.client.HttpClient;
 import io.kestra.core.http.client.HttpClientResponseException;
@@ -16,7 +16,6 @@ import java.util.Map;
 
 public class ProxmoxClient implements AutoCloseable {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final int POLL_INTERVAL_MS = 2_000;
     private static final int DEFAULT_TIMEOUT_MINUTES = 5;
 
@@ -184,9 +183,9 @@ public class ProxmoxClient implements AutoCloseable {
     private JsonNode requireData(HttpResponse<String> response, String context) {
         var bodyStr = response.getBody() != null ? response.getBody() : "";
         try {
-            var tree = MAPPER.readTree(bodyStr);
+            var tree = JacksonMapper.ofJson().readTree(bodyStr);
             var data = tree.get("data");
-            return data != null ? data : MAPPER.nullNode();
+            return data != null ? data : JacksonMapper.ofJson().nullNode();
         } catch (Exception e) {
             throw new RuntimeException("Failed to parse response from " + context + ": " + bodyStr, e);
         }

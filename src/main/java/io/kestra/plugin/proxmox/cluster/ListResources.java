@@ -1,8 +1,8 @@
 package io.kestra.plugin.proxmox.cluster;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kestra.core.models.annotations.Example;
+import io.kestra.core.serializers.JacksonMapper;
 import io.kestra.core.models.annotations.Plugin;
 import io.kestra.core.models.annotations.PluginProperty;
 import io.kestra.core.models.property.Property;
@@ -55,8 +55,6 @@ import java.util.List;
 )
 public class ListResources extends AbstractTask<ListResources.Output> {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
     @Schema(
         title = "Resource type filter",
         description = "Optional filter: vm, node, storage, or pool. Omit to return all types."
@@ -78,7 +76,7 @@ public class ListResources extends AbstractTask<ListResources.Output> {
             var data = client.get(path);
             var resources = new ArrayList<ResourceInfo>();
             for (var item : data) {
-                resources.add(MAPPER.treeToValue(item, ResourceInfo.class));
+                resources.add(JacksonMapper.ofJson().treeToValue(item, ResourceInfo.class));
             }
             logger.info("Found {} cluster resources", resources.size());
             return new Output(resources);

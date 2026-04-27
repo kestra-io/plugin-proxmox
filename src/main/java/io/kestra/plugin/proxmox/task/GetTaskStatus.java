@@ -1,8 +1,8 @@
 package io.kestra.plugin.proxmox.task;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kestra.core.models.annotations.Example;
+import io.kestra.core.serializers.JacksonMapper;
 import io.kestra.core.models.annotations.Plugin;
 import io.kestra.core.models.annotations.PluginProperty;
 import io.kestra.core.models.property.Property;
@@ -51,8 +51,6 @@ import java.nio.charset.StandardCharsets;
 )
 public class GetTaskStatus extends AbstractTask<GetTaskStatus.Output> {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
     @Schema(title = "Task UPID", description = "Proxmox Unique Process ID of the task to query.")
     @NotNull
     @PluginProperty(group = "main")
@@ -66,7 +64,7 @@ public class GetTaskStatus extends AbstractTask<GetTaskStatus.Output> {
         try (var client = createClient(runContext)) {
             var encodedUpid = URLEncoder.encode(rUpid, StandardCharsets.UTF_8);
             var data = client.get("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/tasks/" + encodedUpid + "/status");
-            var status = MAPPER.treeToValue(data, TaskStatus.class);
+            var status = JacksonMapper.ofJson().treeToValue(data, TaskStatus.class);
             return new Output(status);
         }
     }

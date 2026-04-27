@@ -1,8 +1,8 @@
 package io.kestra.plugin.proxmox.backup;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kestra.core.models.annotations.Example;
+import io.kestra.core.serializers.JacksonMapper;
 import io.kestra.core.models.annotations.Plugin;
 import io.kestra.core.models.annotations.PluginProperty;
 import io.kestra.core.models.property.Property;
@@ -52,8 +52,6 @@ import java.util.ArrayList;
 )
 public class List extends AbstractTask<List.Output> {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
     @Schema(title = "Storage ID")
     @NotNull
     @PluginProperty(group = "main")
@@ -69,7 +67,7 @@ public class List extends AbstractTask<List.Output> {
             var data = client.get("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/storage/" + URLEncoder.encode(rStorage, StandardCharsets.UTF_8) + "/content?content=backup");
             var backups = new ArrayList<BackupInfo>();
             for (var item : data) {
-                backups.add(MAPPER.treeToValue(item, BackupInfo.class));
+                backups.add(JacksonMapper.ofJson().treeToValue(item, BackupInfo.class));
             }
             logger.info("Found {} backups on storage '{}'", backups.size(), rStorage);
             return new Output(backups);

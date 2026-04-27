@@ -1,8 +1,8 @@
 package io.kestra.plugin.proxmox.network;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kestra.core.models.annotations.Example;
+import io.kestra.core.serializers.JacksonMapper;
 import io.kestra.core.models.annotations.Plugin;
 import io.kestra.core.runners.RunContext;
 import io.kestra.plugin.proxmox.AbstractTask;
@@ -49,8 +49,6 @@ import java.util.List;
 )
 public class ListNetworks extends AbstractTask<ListNetworks.Output> {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
     @Override
     public Output run(RunContext runContext) throws Exception {
         var logger = runContext.logger();
@@ -60,7 +58,7 @@ public class ListNetworks extends AbstractTask<ListNetworks.Output> {
             var data = client.get("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/network");
             var interfaces = new ArrayList<NetworkInterface>();
             for (var item : data) {
-                interfaces.add(MAPPER.treeToValue(item, NetworkInterface.class));
+                interfaces.add(JacksonMapper.ofJson().treeToValue(item, NetworkInterface.class));
             }
             logger.info("Found {} network interfaces on node {}", interfaces.size(), rNode);
             return new Output(interfaces);

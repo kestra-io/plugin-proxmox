@@ -1,8 +1,8 @@
 package io.kestra.plugin.proxmox.cluster;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kestra.core.models.annotations.Example;
+import io.kestra.core.serializers.JacksonMapper;
 import io.kestra.core.models.annotations.Plugin;
 import io.kestra.core.runners.RunContext;
 import io.kestra.plugin.proxmox.AbstractTask;
@@ -46,8 +46,6 @@ import lombok.experimental.SuperBuilder;
 )
 public class GetNodeStatus extends AbstractTask<GetNodeStatus.Output> {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
     @Override
     public Output run(RunContext runContext) throws Exception {
         var logger = runContext.logger();
@@ -55,7 +53,7 @@ public class GetNodeStatus extends AbstractTask<GetNodeStatus.Output> {
 
         try (var client = createClient(runContext)) {
             var data = client.get("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/status");
-            var status = MAPPER.treeToValue(data, NodeStatus.class);
+            var status = JacksonMapper.ofJson().treeToValue(data, NodeStatus.class);
             logger.info("Node '{}' status: uptime={}s", rNode, status.uptime());
             return new Output(status);
         }

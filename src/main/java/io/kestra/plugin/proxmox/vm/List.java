@@ -1,8 +1,8 @@
 package io.kestra.plugin.proxmox.vm;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kestra.core.models.annotations.Example;
+import io.kestra.core.serializers.JacksonMapper;
 import io.kestra.core.models.annotations.Plugin;
 import io.kestra.core.runners.RunContext;
 import io.kestra.plugin.proxmox.AbstractTask;
@@ -50,8 +50,6 @@ import java.util.ArrayList;
 )
 public class List extends AbstractTask<List.Output> {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
     @Override
     public Output run(RunContext runContext) throws Exception {
         var logger = runContext.logger();
@@ -61,7 +59,7 @@ public class List extends AbstractTask<List.Output> {
             var data = client.get("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/qemu");
             var vms = new ArrayList<VmInfo>();
             for (var item : data) {
-                vms.add(MAPPER.treeToValue(item, VmInfo.class));
+                vms.add(JacksonMapper.ofJson().treeToValue(item, VmInfo.class));
             }
             logger.info("Found {} VMs on node '{}'", vms.size(), rNode);
             return new Output(vms);

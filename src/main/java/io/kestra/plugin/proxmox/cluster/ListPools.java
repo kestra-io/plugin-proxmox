@@ -1,8 +1,8 @@
 package io.kestra.plugin.proxmox.cluster;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kestra.core.models.annotations.Example;
+import io.kestra.core.serializers.JacksonMapper;
 import io.kestra.core.models.annotations.Plugin;
 import io.kestra.core.runners.RunContext;
 import io.kestra.plugin.proxmox.AbstractTask;
@@ -47,8 +47,6 @@ import java.util.List;
 )
 public class ListPools extends AbstractTask<ListPools.Output> {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
     @Override
     public Output run(RunContext runContext) throws Exception {
         var logger = runContext.logger();
@@ -57,7 +55,7 @@ public class ListPools extends AbstractTask<ListPools.Output> {
             var data = client.get("/pools");
             var pools = new ArrayList<PoolInfo>();
             for (var item : data) {
-                pools.add(MAPPER.treeToValue(item, PoolInfo.class));
+                pools.add(JacksonMapper.ofJson().treeToValue(item, PoolInfo.class));
             }
             logger.info("Found {} pools", pools.size());
             return new Output(pools);

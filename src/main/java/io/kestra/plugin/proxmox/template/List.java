@@ -1,8 +1,8 @@
 package io.kestra.plugin.proxmox.template;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kestra.core.models.annotations.Example;
+import io.kestra.core.serializers.JacksonMapper;
 import io.kestra.core.models.annotations.Plugin;
 import io.kestra.core.runners.RunContext;
 import io.kestra.plugin.proxmox.AbstractTask;
@@ -48,8 +48,6 @@ import java.util.ArrayList;
 )
 public class List extends AbstractTask<List.Output> {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
     @Override
     public Output run(RunContext runContext) throws Exception {
         var logger = runContext.logger();
@@ -59,7 +57,7 @@ public class List extends AbstractTask<List.Output> {
             var templates = new ArrayList<TemplateInfo>();
             for (var item : data) {
                 if (item.path("template").asInt(0) == 1) {
-                    templates.add(MAPPER.treeToValue(item, TemplateInfo.class));
+                    templates.add(JacksonMapper.ofJson().treeToValue(item, TemplateInfo.class));
                 }
             }
             logger.info("Found {} templates in cluster", templates.size());
