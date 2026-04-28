@@ -14,7 +14,7 @@ class GetNodeStatusTest extends AbstractProxmoxTest {
     void getNodeStatus() throws Exception {
         wireMock.stubFor(get(urlEqualTo("/api2/json/nodes/pve/status"))
             .willReturn(okJson("""
-                {"data":{"uptime":86400,"cpu":0.05,"memory":2147483648,"maxmem":8589934592,"pveversion":"pve-manager/8.0"}}
+                {"data":{"uptime":86400,"cpu":0.05,"memory":{"used":2147483648,"free":4294967296,"available":4294967296,"total":8589934592},"pveversion":"pve-manager/8.0"}}
                 """)));
 
         var task = GetNodeStatus.builder()
