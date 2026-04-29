@@ -101,7 +101,7 @@ public abstract class AbstractTask<T extends io.kestra.core.models.tasks.Output>
     @Getter
     public static class Output implements io.kestra.core.models.tasks.Output {
 
-        @Schema(title = "VM or container ID", description = "Integer VMID as a string.")
+        @Schema(title = "VM or container ID", description = "VMID of the affected resource.")
         private final String vmId;
 
         @Schema(title = "VM or container name")

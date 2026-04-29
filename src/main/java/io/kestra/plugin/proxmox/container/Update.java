@@ -57,7 +57,7 @@ import java.util.Map;
 )
 public class Update extends AbstractTask<VoidOutput> {
 
-    @Schema(title = "Container name or ID")
+    @Schema(title = "Container name or ID", description = "Container name (resolved at runtime) or integer VMID.")
     @NotNull
     @PluginProperty(group = "main")
     private Property<String> vmName;

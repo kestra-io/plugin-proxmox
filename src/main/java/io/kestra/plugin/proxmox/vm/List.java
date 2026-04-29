@@ -76,6 +76,6 @@ public class List extends AbstractTask<List.Output> {
         @Schema(title = "VM name") String name,
         @Schema(title = "VM status", description = "running, stopped, etc.") String status,
         @Schema(title = "Number of vCPUs") int cpus,
-        @Schema(title = "Configured memory in MiB") long maxmem
+        @Schema(title = "Configured memory in bytes") long maxmem
     ) {}
 }

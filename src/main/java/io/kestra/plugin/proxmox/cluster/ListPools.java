@@ -23,7 +23,7 @@ import java.util.List;
 @NoArgsConstructor
 @Schema(
     title = "List resource pools in a Proxmox VE cluster",
-    description = "Retrieves all resource pools from /pools."
+    description = "Retrieves all resource pools from /pools. The node property is used to connect to the API but does not filter results to that node."
 )
 @Plugin(
     examples = {

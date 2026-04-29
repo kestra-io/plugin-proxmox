@@ -67,8 +67,15 @@ public class GetNodeStatus extends AbstractTask<GetNodeStatus.Output> {
     public record NodeStatus(
         @Schema(title = "Node uptime in seconds") long uptime,
         @Schema(title = "CPU usage ratio (0..1)") double cpu,
-        @Schema(title = "Used memory in bytes") long memory,
-        @Schema(title = "Total memory in bytes") long maxmem,
+        @Schema(title = "Memory usage") Memory memory,
         @Schema(title = "PVE version") String pveversion
+    ) {}
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record Memory(
+        @Schema(title = "Used memory in bytes") long used,
+        @Schema(title = "Free memory in bytes") long free,
+        @Schema(title = "Available memory in bytes") long available,
+        @Schema(title = "Total memory in bytes") long total
     ) {}
 }

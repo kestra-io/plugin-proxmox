@@ -60,7 +60,7 @@ import java.util.LinkedHashMap;
 )
 public class Restore extends AbstractTask<AbstractTask.Output> {
 
-    @Schema(title = "New VM or container ID to assign")
+    @Schema(title = "New VM or container ID to assign", description = "Integer VMID to assign to the restored resource. Must be unique in the cluster.")
     @NotNull
     @PluginProperty(group = "main")
     private Property<Integer> vmId;
@@ -82,7 +82,7 @@ public class Restore extends AbstractTask<AbstractTask.Output> {
 
     @Schema(
         title = "Task timeout",
-        description = "Maximum time to wait for the backup operation to complete. Defaults to 1 hour."
+        description = "Maximum time to wait for the restore operation to complete. Defaults to 1 hour."
     )
     @Builder.Default
     @PluginProperty(group = "advanced")

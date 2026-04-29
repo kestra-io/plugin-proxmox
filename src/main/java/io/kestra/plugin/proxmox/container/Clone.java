@@ -52,12 +52,12 @@ import java.util.LinkedHashMap;
 )
 public class Clone extends AbstractTask<AbstractTask.Output> {
 
-    @Schema(title = "Source container name or ID")
+    @Schema(title = "Source container name or ID", description = "Container name (resolved at runtime) or integer VMID.")
     @NotNull
     @PluginProperty(group = "main")
     private Property<String> vmName;
 
-    @Schema(title = "New container ID")
+    @Schema(title = "New container ID", description = "Integer VMID to assign to the clone. Must be unique in the cluster.")
     @NotNull
     @PluginProperty(group = "main")
     private Property<Integer> newId;
