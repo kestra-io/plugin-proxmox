@@ -1,5 +1,5 @@
 @PluginSubGroup(
-    title = "Proxmox VE - Network",
+    title = "Proxmox VE Network",
     description = "Tasks that query network interfaces and firewall rules on a Proxmox VE node.",
     categories = { PluginSubGroup.PluginCategory.CLOUD, PluginSubGroup.PluginCategory.INFRASTRUCTURE }
 )
