@@ -66,10 +66,10 @@ public class Create extends AbstractTask<VoidOutput> {
         try (var client = createClient(runContext)) {
             var vmid = client.resolveVmId(rVmName);
             logger.info("Converting VM {} (vmid={}) to template", rVmName, vmid);
-            client.post("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/qemu/" + vmid + "/template", null);
+            client.postAndWait("/nodes/" + URLEncoder.encode(rNode, StandardCharsets.UTF_8) + "/qemu/" + vmid + "/template", null);
             logger.info("VM {} converted to template", rVmName);
         }
 
-        return new VoidOutput();
+        return null;
     }
 }
