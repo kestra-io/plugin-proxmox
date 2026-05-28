@@ -20,31 +20,49 @@ Optionally set `verifySsl` (default `false`, because Proxmox nodes commonly use 
 
 `vm.Start`, `vm.Stop`, `vm.Reboot`, `vm.Reset`, and `vm.Delete` manage VM power state and deletion — set `vmName` (VM name or VMID, required) on each.
 
-`vm.Update` and `vm.Migrate` update VM configuration and migrate a VM to another node — set `vmName` (required).
+`vm.Update` updates VM configuration — set `vmName` (required). Optionally set `cores`, `memory`, and `config` (a map of additional Proxmox parameters).
+
+`vm.Migrate` migrates a VM to another node — set `vmName` and `targetNode` (both required).
 
 `vm.List` lists all QEMU VMs on the node.
 
-`container.Create`, `container.Clone`, `container.Start`, `container.Stop`, `container.Reboot`, `container.Delete`, `container.Update`, `container.Migrate`, and `container.List` provide the same lifecycle operations for LXC containers.
+`container.Create` creates a new LXC container — set `vmId` (integer CTID, required) and `osTemplate` (e.g. `local:vztmpl/ubuntu-22.04-standard_22.04-1_amd64.tar.zst`, required). Optionally set `hostname`, `cores` (default `1`), `memory` (MiB, default `512`), `rootfs` (default `local-lvm:4`), `net` (default `name=eth0,bridge=vmbr0,ip=dhcp`), `unprivileged` (default `true`), and `powerOn` (default `false`).
+
+`container.Clone` clones an LXC container — set `vmName` (source container name or ID, required) and `newId` (new CTID, required). Optionally set `newName`.
+
+`container.Start`, `container.Stop`, `container.Reboot`, `container.Delete` manage container power state and deletion — set `vmName` (required) on each.
+
+`container.Update` updates container configuration — set `vmName` (required). Optionally set `cores`, `memory`, and `config`.
+
+`container.Migrate` migrates a container to another node — set `vmName` and `targetNode` (both required).
+
+`container.List` lists all LXC containers on the node.
 
 `backup.Create` creates a vzdump backup — set `vmName` (VM or container name or ID, required) and `storage` (storage ID, required). Optionally set `mode` (default `snapshot`; also `suspend` or `stop`), `compress` (default `zstd`; also `lzo`, `gzip`, or `0` for none), and `timeout` (default `PT1H`).
 
-`backup.List` lists available backups; `backup.Restore` restores a backup.
+`backup.List` lists available backups on a storage — set `storage` (required).
+
+`backup.Restore` restores a backup — set `vmId` (new VMID to restore into, required), `archive` (backup archive path, required), and `storage` (required). Optionally set `resourceType` (`vm` or `container`, default `vm`) and `timeout` (default `PT1H`).
 
 `snapshot.Create` creates a snapshot — set `vmName` (required) and `snapName` (required). Optionally set `snapDescription` and `resourceType` (`vm` or `container`, default `vm`).
 
-`snapshot.List`, `snapshot.Delete`, and `snapshot.Rollback` list, remove, and roll back to snapshots.
+`snapshot.List` lists snapshots for a VM or container — set `vmName` (required). Optionally set `resourceType` (default `vm`).
+
+`snapshot.Delete` deletes a snapshot — set `vmName` and `snapName` (both required). Optionally set `resourceType` (default `vm`).
+
+`snapshot.Rollback` rolls back to a snapshot — set `vmName` and `snapName` (both required). Optionally set `resourceType` (default `vm`).
 
 `cluster.ListResources` returns all cluster resources — optionally set `typeFilter` (`vm`, `node`, `storage`, or `pool`) to filter results.
 
 `cluster.GetNodeStatus` returns the status of the connected node; `cluster.ListPools` lists resource pools.
 
-`network.ListNetworks` lists network interfaces on the node; `network.GetFirewallRules` returns firewall rules.
+`network.ListNetworks` lists network interfaces on the node; `network.GetFirewallRules` returns firewall rules (optionally scoped to a specific VM or container by setting `vmId` and `resourceType`).
 
-`template.Create` converts a VM or container to a template; `template.List` lists available templates.
+`template.Create` converts a VM or container to a template — set `vmName` (required). `template.List` lists available templates.
 
 `task.WaitForTask` waits for an async Proxmox task to complete — set `upid` (the Proxmox Unique Process ID, required). Optionally set `timeoutSeconds` (default `600`). Outputs `upid`.
 
-`task.GetTaskStatus` returns the current status of a task by UPID.
+`task.GetTaskStatus` returns the current status of a task — set `upid` (required).
 
 ## Triggers
 
