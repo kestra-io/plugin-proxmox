@@ -1,0 +1,51 @@
+# How to use the Proxmox VE plugin
+
+Manage virtual machines, containers, backups, snapshots, and cluster resources on Proxmox VE from Kestra flows.
+
+## Authentication
+
+All tasks require `host` (the Proxmox VE node hostname or IP, required) and `node` (the cluster node name, e.g. `pve`, required). Optionally set `port` (default `8006`). Authenticate with either:
+
+**Ticket (username/password):** set `username` (in the form `user@realm`, e.g. `root@pam`) and `password`.
+
+**API token:** set `tokenId` (in the form `user@realm!tokenname`, e.g. `root@pam!mytoken`) and `tokenSecret`.
+
+Optionally set `verifySsl` (default `false`, because Proxmox nodes commonly use self-signed certificates). Store secrets in [secrets](https://kestra.io/docs/concepts/secret) and apply connection properties globally with [plugin defaults](https://kestra.io/docs/workflow-components/plugin-defaults).
+
+## Tasks
+
+`vm.Create` creates a new QEMU VM — set `vmId` (integer VMID, required) and `vmName` (required). Optionally set `cores` (default `1`), `memory` (MiB, default `1024`), `disk` (default `local-lvm:8`), `net` (default `virtio,bridge=vmbr0`), `osTemplate`, and `powerOn` (default `false`). Outputs `vmId`, `vmName`, and `upid`.
+
+`vm.Clone` clones an existing QEMU VM — set `vmName` (source VM name or ID, required) and `newId` (new VMID, required). Optionally set `newName`, `targetNode`, and `full` (default `false` for a linked clone).
+
+`vm.Start`, `vm.Stop`, `vm.Reboot`, `vm.Reset`, and `vm.Delete` manage VM power state and deletion — set `vmName` (VM name or VMID, required) on each.
+
+`vm.Update` and `vm.Migrate` update VM configuration and migrate a VM to another node — set `vmName` (required).
+
+`vm.List` lists all QEMU VMs on the node.
+
+`container.Create`, `container.Clone`, `container.Start`, `container.Stop`, `container.Reboot`, `container.Delete`, `container.Update`, `container.Migrate`, and `container.List` provide the same lifecycle operations for LXC containers.
+
+`backup.Create` creates a vzdump backup — set `vmName` (VM or container name or ID, required) and `storage` (storage ID, required). Optionally set `mode` (default `snapshot`; also `suspend` or `stop`), `compress` (default `zstd`; also `lzo`, `gzip`, or `0` for none), and `timeout` (default `PT1H`).
+
+`backup.List` lists available backups; `backup.Restore` restores a backup.
+
+`snapshot.Create` creates a snapshot — set `vmName` (required) and `snapName` (required). Optionally set `snapDescription` and `resourceType` (`vm` or `container`, default `vm`).
+
+`snapshot.List`, `snapshot.Delete`, and `snapshot.Rollback` list, remove, and roll back to snapshots.
+
+`cluster.ListResources` returns all cluster resources — optionally set `typeFilter` (`vm`, `node`, `storage`, or `pool`) to filter results.
+
+`cluster.GetNodeStatus` returns the status of the connected node; `cluster.ListPools` lists resource pools.
+
+`network.ListNetworks` lists network interfaces on the node; `network.GetFirewallRules` returns firewall rules.
+
+`template.Create` converts a VM or container to a template; `template.List` lists available templates.
+
+`task.WaitForTask` waits for an async Proxmox task to complete — set `upid` (the Proxmox Unique Process ID, required). Optionally set `timeoutSeconds` (default `600`). Outputs `upid`.
+
+`task.GetTaskStatus` returns the current status of a task by UPID.
+
+## Triggers
+
+`vm.Trigger` fires when any VM's status matches a configured value — set `connection` (a `ProxmoxConnection` block with `host`, `node`, and auth fields, required) and `targetStatus` (e.g. `running` or `stopped`, required). Optionally set `interval` (default `PT1M`). Uses stateful change detection: fires once when a VM enters the target status and again only if it leaves and re-enters it.
