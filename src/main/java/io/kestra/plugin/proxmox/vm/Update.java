@@ -98,6 +98,6 @@ public class Update extends AbstractTask<VoidOutput> {
             logger.info("VM {} config updated", rVmName);
         }
 
-        return new VoidOutput();
+        return null;
     }
 }
