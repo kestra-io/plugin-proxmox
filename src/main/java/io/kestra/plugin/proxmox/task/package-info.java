@@ -1,5 +1,5 @@
 @PluginSubGroup(
-    title = "Proxmox VE - Tasks",
+    title = "Proxmox VE Tasks",
     description = "Tasks that query and wait for asynchronous Proxmox operations identified by their UPID.",
     categories = { PluginSubGroup.PluginCategory.CLOUD, PluginSubGroup.PluginCategory.INFRASTRUCTURE }
 )

@@ -1,5 +1,5 @@
 @PluginSubGroup(
-    title = "Proxmox VE - Cluster",
+    title = "Proxmox VE Cluster",
     description = "Tasks that query node status, pools, and cluster-wide resources on a Proxmox VE cluster.",
     categories = { PluginSubGroup.PluginCategory.CLOUD, PluginSubGroup.PluginCategory.INFRASTRUCTURE }
 )
