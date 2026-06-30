@@ -10,7 +10,7 @@ All tasks require `host` (the Proxmox VE node hostname or IP, required) and `nod
 
 **API token:** set `tokenId` (in the form `user@realm!tokenname`, e.g. `root@pam!mytoken`) and `tokenSecret`.
 
-Optionally set `verifySsl` (default `false`, because Proxmox nodes commonly use self-signed certificates). Store secrets in [secrets](https://kestra.io/docs/concepts/secret) and apply connection properties globally with [plugin defaults](https://kestra.io/docs/workflow-components/plugin-defaults).
+Optionally set `verifySsl` (default `true`; set to `false` only for trusted networks with self-signed Proxmox certificates). Store secrets in [secrets](https://kestra.io/docs/concepts/secret) and apply connection properties globally with [plugin defaults](https://kestra.io/docs/workflow-components/plugin-defaults).
 
 ## Tasks
 
