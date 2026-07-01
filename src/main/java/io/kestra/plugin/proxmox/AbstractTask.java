@@ -59,6 +59,7 @@ public abstract class AbstractTask<T extends io.kestra.core.models.tasks.Output>
         description = "Password for ticket-based authentication."
     )
     @PluginProperty(group = "connection", secret = true)
+    @ToString.Exclude
     protected Property<String> password;
 
     @Schema(
@@ -73,15 +74,16 @@ public abstract class AbstractTask<T extends io.kestra.core.models.tasks.Output>
         description = "The UUID secret associated with the token ID."
     )
     @PluginProperty(group = "connection", secret = true)
+    @ToString.Exclude
     protected Property<String> tokenSecret;
 
     @Schema(
         title = "Verify SSL",
-        description = "Validate the server TLS certificate. Defaults to false because Proxmox nodes commonly use self-signed certificates."
+        description = "Validate the server TLS certificate. Defaults to true; set to false only for trusted networks with self-signed Proxmox certificates."
     )
     @Builder.Default
     @PluginProperty(group = "advanced")
-    protected Property<Boolean> verifySsl = Property.ofValue(false);
+    protected Property<Boolean> verifySsl = Property.ofValue(true);
 
     protected ProxmoxClient createClient(RunContext runContext) throws Exception {
         return ClientFactory.create(
@@ -92,7 +94,7 @@ public abstract class AbstractTask<T extends io.kestra.core.models.tasks.Output>
             runContext.render(password).as(String.class).orElse(null),
             runContext.render(tokenId).as(String.class).orElse(null),
             runContext.render(tokenSecret).as(String.class).orElse(null),
-            runContext.render(verifySsl).as(Boolean.class).orElse(false),
+            runContext.render(verifySsl).as(Boolean.class).orElse(true),
             runContext
         );
     }

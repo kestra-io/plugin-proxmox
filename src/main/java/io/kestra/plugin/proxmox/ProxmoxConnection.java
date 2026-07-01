@@ -52,10 +52,10 @@ public class ProxmoxConnection {
     @PluginProperty(group = "connection", secret = true)
     protected Property<String> tokenSecret;
 
-    @Schema(title = "Verify SSL", description = "Validate the server TLS certificate. Defaults to false because Proxmox nodes commonly use self-signed certificates.")
+    @Schema(title = "Verify SSL", description = "Validate the server TLS certificate. Defaults to true; set to false only for trusted networks with self-signed Proxmox certificates.")
     @Builder.Default
     @PluginProperty(group = "advanced")
-    protected Property<Boolean> verifySsl = Property.ofValue(false);
+    protected Property<Boolean> verifySsl = Property.ofValue(true);
 
     public ProxmoxClient createClient(RunContext runContext) throws Exception {
         return ClientFactory.create(
@@ -66,7 +66,7 @@ public class ProxmoxConnection {
             runContext.render(password).as(String.class).orElse(null),
             runContext.render(tokenId).as(String.class).orElse(null),
             runContext.render(tokenSecret).as(String.class).orElse(null),
-            runContext.render(verifySsl).as(Boolean.class).orElse(false),
+            runContext.render(verifySsl).as(Boolean.class).orElse(true),
             runContext
         );
     }
