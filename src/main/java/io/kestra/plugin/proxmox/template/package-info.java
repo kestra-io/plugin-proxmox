@@ -1,5 +1,5 @@
 @PluginSubGroup(
-    title = "Proxmox VE - Templates",
+    title = "Proxmox VE Templates",
     description = "Tasks that convert VMs to templates and list available templates on a Proxmox VE cluster.",
     categories = { PluginSubGroup.PluginCategory.CLOUD, PluginSubGroup.PluginCategory.INFRASTRUCTURE }
 )

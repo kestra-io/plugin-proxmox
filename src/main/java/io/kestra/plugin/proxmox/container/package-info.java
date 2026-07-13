@@ -1,5 +1,5 @@
 @PluginSubGroup(
-    title = "Proxmox VE - LXC Containers",
+    title = "Proxmox VE Containers",
     description = "Tasks that manage LXC containers on a Proxmox VE node.",
     categories = { PluginSubGroup.PluginCategory.CLOUD, PluginSubGroup.PluginCategory.INFRASTRUCTURE }
 )

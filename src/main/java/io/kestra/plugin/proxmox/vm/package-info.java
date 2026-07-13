@@ -1,5 +1,5 @@
 @PluginSubGroup(
-    title = "Proxmox VE - Virtual Machines",
+    title = "Proxmox VE VM",
     description = "Tasks that manage QEMU virtual machines on a Proxmox VE node.",
     categories = { PluginSubGroup.PluginCategory.CLOUD, PluginSubGroup.PluginCategory.INFRASTRUCTURE }
 )

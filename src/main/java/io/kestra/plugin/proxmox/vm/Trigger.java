@@ -81,12 +81,12 @@ public class Trigger extends AbstractTrigger implements PollingTriggerInterface,
 
     @Schema(title = "Polling interval", description = "How often to poll for VM status changes. ISO 8601 duration, e.g. PT1M.")
     @Builder.Default
-    @PluginProperty
+    @PluginProperty(group = "execution")
     private Duration interval = Duration.ofMinutes(1);
 
     @Schema(title = "Proxmox connection")
     @NotNull
-    @PluginProperty
+    @PluginProperty(group = "connection")
     private ProxmoxConnection connection;
 
     @Schema(
